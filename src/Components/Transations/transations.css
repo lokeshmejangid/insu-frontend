@@ -1,0 +1,14 @@
+.btnFilter{
+    background: purple !important;
+    padding: 0.5em 1em !important;
+    height: 4em!important;
+    width: 10em !important;
+    color: white !important;
+}
+.btnClrFilter{
+    border: solid 1px purple !important;
+    padding: 0.5em 1em !important;
+    height: 4em !important;
+    width: 10em !important;
+    color: purple !important;
+}

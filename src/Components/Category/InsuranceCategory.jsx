@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
 import MUIDataTable from 'mui-datatables';
-import './Clients.css';
+import './InsuranceCategory.css';
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { FiPlus } from "react-icons/fi"; // Import the plus icon
 import IconButton from "@mui/material/IconButton";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
-import AddEditModal from "../Modal/AddEditModal";
+import AddEditCategory from "../Modal/AddEditCategory.jsx";
 
-const Clients = () => {
+const InsuranceCategory = () => {
   const [isEdit, setEdit] = useState(false);
   const [editData, setEditData] = useState();
 
   const handleAddBtn = () => {
     setEdit(true);
-    setEditData();  
+    setEditData();
   }
 
   const handleEdit = (data) => {
     setEdit(true);
     setEditData(data);
+    console.log(data);
   };
 
   const handleClose = () => {
@@ -40,7 +41,7 @@ const Clients = () => {
     // }
   };
 
-const handleUpdate = () => {}
+  const handleUpdate = () => { }
   const addButton = () => {
     return (
       <Tooltip disableFocusListener title="Add Client">
@@ -54,32 +55,18 @@ const handleUpdate = () => {}
   const columns = [
     {
       name: 'dateCreated',
-      label: 'Date Created',
+      label: 'dateCreated',
       options: { filter: false, sort: true },
     },
-    {
-      name: 'image',
-      label: 'Image',
-      options: {
-        filter: false,
-        sort: false,
-        customBodyRender: (value) => (
-          <img
-            src={value}
-            alt="Client"
-            style={{ width: 50, height: 50, borderRadius: '50%' }}
-          />
-        ),
-      },
-    },
-    {
-      name: 'code',
-      label: 'Code',
-      options: { filter: true, sort: true },
-    },
+
     {
       name: 'name',
       label: 'Name',
+      options: { filter: true, sort: true },
+    },
+    {
+      name: 'description',
+      label: 'description',
       options: { filter: true, sort: true },
     },
     {
@@ -100,33 +87,47 @@ const handleUpdate = () => {}
         customBodyRender: (value, tableMeta, updateValue) => (
           <div className="actionIcons">
             <MdOutlineEdit size={20} color="green" className="pointer" onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(tableMeta.rowData);
-                }} />
-            <MdDelete size={20} color="red" className="pointer"  onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(tableMeta.rowData);
-                }}/>
+              e.stopPropagation();
+              handleEdit(tableMeta.rowData);
+            }} />
+            <MdDelete size={20} color="red" className="pointer" onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(tableMeta.rowData);
+            }} />
           </div>
         ),
       },
     },
   ];
 
-  const data = [
+  const categories = [
     {
-      dateCreated: '2022-02-03 11:40',
-      image: 'https://via.placeholder.com/50',
-      code: '202202-00002',
-      name: 'Blake, Claire C',
-      status: 'Active',
+      id: 1,
+      dateCreated: "2022-02-03 08:53",
+      name: "2 Wheeler",
+      description: "Integer auctor at mauris a...",
+      status: "Active",
     },
     {
-      dateCreated: '2022-02-03 10:45',
-      image: 'https://via.placeholder.com/50',
-      code: '202202-00001',
-      name: 'Cooper, Mark D',
-      status: 'Active',
+      id: 2,
+      dateCreated: "2022-02-03 08:54",
+      name: "3 Wheeler",
+      description: "Sed at leo vel felis pellentesque...",
+      status: "Active",
+    },
+    {
+      id: 3,
+      dateCreated: "2022-02-03 08:56",
+      name: "4 Wheeler",
+      description: "Quisque at erat at ipsum mollis...",
+      status: "Active",
+    },
+    {
+      id: 4,
+      dateCreated: "2022-02-03 08:52",
+      name: "Commercial",
+      description: "Lorem ipsum dolor sit amet...",
+      status: "Active",
     },
   ];
 
@@ -142,9 +143,9 @@ const handleUpdate = () => {}
 
   return (
     <div className="clients-container">
-      <MUIDataTable title={"List of Clients"} data={data} columns={columns} options={options} />
+      <MUIDataTable title={"List of Insurance"} data={categories} columns={columns} options={options} />
       {isEdit && (
-        <AddEditModal
+        <AddEditCategory
           isEdit={isEdit}
           handleClose={handleClose}
           editData={editData}
@@ -155,4 +156,4 @@ const handleUpdate = () => {}
   );
 };
 
-export default Clients;
+export default InsuranceCategory;

@@ -5,6 +5,10 @@ import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navig
 import Header from './Components/Layout/Header/Header.jsx';
 import Landing from './Components/Landing/Landing.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
+import Insurance from './Components/Insurance/Insurance.jsx';
+import Transition from './Components/Transations/Transations.jsx';
+import InsuranceCategory from './Components/Category/InsuranceCategory.jsx';
+import PoliciesList from './Components/Policies/PoliciesList.jsx';
 import Clients from './Components/Client/Clients.jsx';
 
 const AppContent = () => {
@@ -57,6 +61,10 @@ const AppContent = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/clients" element={<Clients />} />
           <Route path="/signin" element={<Landing />} />
+          <Route path="/insurance" element={<Insurance />} />
+          <Route path="/transation" element={<Transition />} />
+          <Route path="/insuranceCategory" element={<InsuranceCategory />} />
+          <Route path="/policiesList" element={<PoliciesList />} />
         </Routes>
       </Box>
     </Box>

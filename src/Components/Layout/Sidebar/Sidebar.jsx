@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '../../Common/Logo/Logo.jsx';
 import { MdDashboard } from "react-icons/md";
 import { FaUsers } from 'react-icons/fa';
+import { AiFillInsurance } from "react-icons/ai";
+import { GrTransaction } from "react-icons/gr";
+import { MdCategory } from "react-icons/md";
+import { MdPolicy } from "react-icons/md";
 
 
 const Sidebar = ({ open }) => {
@@ -57,9 +61,13 @@ const Sidebar = ({ open }) => {
         >
           {[
             { text: 'Dashboard', icon: <MdDashboard color='#fff' fontSize='25px' />, path: '/' },
-            { text: 'Clients', icon: <FaUsers color='#fff' fontSize='25px' />, path: '/clients' }
+            { text: 'Clients', icon: <FaUsers color='#fff' fontSize='25px' />, path: '/clients' },
+            { text: 'Insurance', icon: <AiFillInsurance color='#fff' fontSize='25px' />, path: '/insurance' },
+            { text: 'Transarion', icon: <GrTransaction color='#fff' fontSize='25px' />, path: '/transation' },
+            { text: 'Insurance Category', icon: <MdCategory color='#fff' fontSize='25px' />, path: '/insuranceCategory' },
+            { text: 'Policies List', icon: <MdPolicy color='#fff' fontSize='25px' />, path: '/policiesList' },
           ].map((item, index) => (
-            <ListItem button key={index} onClick={() => handleNavigation(item.path)} style={{display: 'flex', gap: '10px'}}>
+            <ListItem button key={index} onClick={() => handleNavigation(item.path)} style={{display: 'flex', gap: '10px', cursor:'pointer'}}>
               <ListItemIcon style={{minWidth: '0'}}>{item.icon}</ListItemIcon>
               {open && <ListItemText primary={item.text} />}
             </ListItem>

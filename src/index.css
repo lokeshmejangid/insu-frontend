@@ -1,0 +1,31 @@
+.modal {
+    width: 40% !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400;
+    background: white;
+    border-radius: 0.5em;
+    box-shadow: 24;
+    padding: 1em;
+  }
+  .modal-xs {
+    width: 90% !important;
+    
+  }
+  .modal .logo {
+    display: flex;
+    justify-content: center;
+  }
+  .modal .title {
+    font-size: 1.2em;
+    font-weight: 900;
+    margin: 1em 0em;
+  }
+  .btnSave{
+    text-align: center;
+  }
+ .pointer{
+    cursor: pointer;
+ }

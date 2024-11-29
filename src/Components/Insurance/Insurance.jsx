@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import MUIDataTable from 'mui-datatables';
-import './Clients.css';
+import './insurance.css';
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { FiPlus } from "react-icons/fi"; // Import the plus icon
 import IconButton from "@mui/material/IconButton";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
-import AddEditModal from "../Modal/AddEditModal";
+import AddEditInsu from "../Modal/AddEditInsu.jsx";
 
-const Clients = () => {
+const Insurance = () => {
   const [isEdit, setEdit] = useState(false);
   const [editData, setEditData] = useState();
 
   const handleAddBtn = () => {
     setEdit(true);
-    setEditData();  
+    setEditData();
   }
 
   const handleEdit = (data) => {
@@ -40,7 +40,7 @@ const Clients = () => {
     // }
   };
 
-const handleUpdate = () => {}
+  const handleUpdate = () => { }
   const addButton = () => {
     return (
       <Tooltip disableFocusListener title="Add Client">
@@ -53,33 +53,24 @@ const handleUpdate = () => {}
 
   const columns = [
     {
-      name: 'dateCreated',
-      label: 'Date Created',
+      name: 'dateRegistered',
+      label: 'Date Registered',
       options: { filter: false, sort: true },
     },
+
     {
-      name: 'image',
-      label: 'Image',
-      options: {
-        filter: false,
-        sort: false,
-        customBodyRender: (value) => (
-          <img
-            src={value}
-            alt="Client"
-            style={{ width: 50, height: 50, borderRadius: '50%' }}
-          />
-        ),
-      },
-    },
-    {
-      name: 'code',
-      label: 'Code',
+      name: 'refCode',
+      label: 'Ref Code',
       options: { filter: true, sort: true },
     },
     {
-      name: 'name',
-      label: 'Name',
+      name: 'clientName',
+      label: 'Client Name',
+      options: { filter: true, sort: true },
+    },
+    {
+      name: 'vehicleReg',
+      label: 'Vehicle Reg',
       options: { filter: true, sort: true },
     },
     {
@@ -100,13 +91,13 @@ const handleUpdate = () => {}
         customBodyRender: (value, tableMeta, updateValue) => (
           <div className="actionIcons">
             <MdOutlineEdit size={20} color="green" className="pointer" onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(tableMeta.rowData);
-                }} />
-            <MdDelete size={20} color="red" className="pointer"  onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(tableMeta.rowData);
-                }}/>
+              e.stopPropagation();
+              handleEdit(tableMeta.rowData);
+            }} />
+            <MdDelete size={20} color="red" className="pointer" onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(tableMeta.rowData);
+            }} />
           </div>
         ),
       },
@@ -115,17 +106,17 @@ const handleUpdate = () => {}
 
   const data = [
     {
-      dateCreated: '2022-02-03 11:40',
-      image: 'https://via.placeholder.com/50',
-      code: '202202-00002',
-      name: 'Blake, Claire C',
+      dateRegistered: '2022-02-03 11:40',
+      refCode: '202202-00002',
+      clientName: 'Blake, Claire C',
+      vehicleReg: '12345678',
       status: 'Active',
     },
     {
-      dateCreated: '2022-02-03 10:45',
-      image: 'https://via.placeholder.com/50',
-      code: '202202-00001',
-      name: 'Cooper, Mark D',
+      dateRegistered: '2022-02-03 10:45',
+      refCode: '202202-00001',
+      clientName: 'Cooper, Mark D',
+      vehicleReg: '12345678',
       status: 'Active',
     },
   ];
@@ -142,9 +133,9 @@ const handleUpdate = () => {}
 
   return (
     <div className="clients-container">
-      <MUIDataTable title={"List of Clients"} data={data} columns={columns} options={options} />
+      <MUIDataTable title={"List of Insurance"} data={data} columns={columns} options={options} />
       {isEdit && (
-        <AddEditModal
+        <AddEditInsu
           isEdit={isEdit}
           handleClose={handleClose}
           editData={editData}
@@ -155,4 +146,4 @@ const handleUpdate = () => {}
   );
 };
 
-export default Clients;
+export default Insurance;
