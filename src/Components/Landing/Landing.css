@@ -1,0 +1,42 @@
+/* Fullscreen layout with centered content */
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* background: url('/path-to-your-background.jpg') no-repeat center center fixed; */
+    background-size: cover;
+    margin: 0;
+  }
+  
+  /* Title text styling */
+  .login-title {
+    margin-bottom: 1em !important;
+    font-weight: bold;
+    color:#000;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Card styling */
+  .MuiCard-root {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  /* Form fields styling */
+  .MuiTextField-root {
+    margin-bottom: 15px !important;
+  }
+  
+  /* Button styling */
+  .login-button {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: purple !important;
+    color: white;
+    padding: 1em !important;
+  }
+  
+  

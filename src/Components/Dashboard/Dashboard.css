@@ -1,0 +1,125 @@
+/* General Styles */
+.dashboard {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* AppBar Styles */
+  .appbar {
+    background-color: #fff !important;
+    color: white;
+    padding: 10px 20px;
+  }
+  
+  .appbar-title {
+    flex-grow: 1;
+    color: #000;
+  }
+  
+  .appbar-avatar {
+    margin-left: 15px;
+    background-color: #ffffff;
+    color: #1976d2;
+  }
+  
+  .appbar-user {
+    margin: 0em 0.6em !important;
+    color: #000;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    background-color: #004d99;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+  }
+  
+  .sidebar-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu li {
+    margin: 15px 0;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .menu li:hover {
+    background-color: #0066cc;
+  }
+  
+  /* Content Styles */
+  .content {
+    padding: 20px;
+  }
+  
+  .welcome-title {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333;
+    text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Stat Card Styles */
+  .stat-card {
+    padding: 20px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .stat-icon-container {
+    flex-shrink: 0;
+  }
+  
+  .stat-icon {
+    font-size: 40px;
+  }
+  
+  .stat-text {
+    text-align: left;
+  }
+  
+  .stat-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      height: auto;
+    }
+  
+    .content {
+      padding: 10px;
+    }
+  }
+  .logoutIcon {
+    color: red !important;
+  }
+  
