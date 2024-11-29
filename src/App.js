@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Sidebar from './Components/Layout/Sidebar/Sidebar.jsx';
-import Header from './Components/Layout/Header/Header.jsx';
 import { Box, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import Landing from './Components/Landing/Landing';
-import Dashboard from './Components/Dashboard/Dashboard';
-import Clients from './Components/Client/Clients';
+import Header from './Components/Layout/Header/Header.jsx';
+import Landing from './Components/Landing/Landing.jsx';
+import Dashboard from './Components/Dashboard/Dashboard.jsx';
+import Clients from './Components/Client/Clients.jsx';
 
 const AppContent = () => {
   const location = useLocation();
@@ -17,7 +17,6 @@ const AppContent = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("jwt");
     navigate('/signin');
   };
 
@@ -40,7 +39,7 @@ const AppContent = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: isAuthRoute ? '40px' : '40px 40px',
+          p: isAuthRoute ? '40px' : '20px 20px',
           position: isAuthRoute ? 'relative' : 'absolute',
           top: isAuthRoute ? '0' : '64px',
           left: 0,
@@ -55,10 +54,9 @@ const AppContent = () => {
         }}
       >
         <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/clients" element={<Clients />} />
-          <Route path="/signin" element='' />
+          <Route path="/signin" element={<Landing />} />
         </Routes>
       </Box>
     </Box>

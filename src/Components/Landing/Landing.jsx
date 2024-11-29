@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 const Landing = () => {
     const navigate = useNavigate();
     const handleSubmit = ()=> {
-        navigate('/dashboard');
+        navigate('/');
 
     }
   return (
