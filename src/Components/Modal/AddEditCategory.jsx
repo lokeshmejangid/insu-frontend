@@ -31,8 +31,8 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
     
     const updatedData = {
       name,
-      status: status === "Active" ? true : false,
-      desc: description,
+      status,
+      description,
     };
     handleUpdate(updatedData);
     handleClose();
@@ -57,9 +57,9 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
         <Grid item xs={12}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
-              <Select value={status ? "Active" : "Inactive"} onChange={(e) => setStatus(e.target.value)}>
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
+              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <MenuItem value="true">Active</MenuItem>
+                <MenuItem value="false">Inactive</MenuItem>
               </Select>
             </FormControl>
           </Grid>

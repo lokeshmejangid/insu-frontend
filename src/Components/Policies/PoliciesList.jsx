@@ -7,10 +7,13 @@ import IconButton from "@mui/material/IconButton";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
 import AddEditPolicies from "../Modal/AddEditPolicies.jsx";
+import { getAllPolicies } from "../../Services/Api.js";
 
 const PoliciesList = () => {
   const [isEdit, setEdit] = useState(false);
   const [editData, setEditData] = useState();
+  const [loading, setLoading] = useState(false);
+  const [policies, setPolicies] = useState();
 
   const handleAddBtn = () => {
     setEdit(true);
@@ -54,8 +57,13 @@ const PoliciesList = () => {
 
   const columns = [
     {
-      name: 'dateCreated',
-      label: 'dateCreated',
+      name: '_id',
+      label: 'Id',
+      options: { filter: false, sort: true, display: false },
+    },
+    {
+      name: 'code',
+      label: 'Policy Code',
       options: { filter: false, sort: true },
     },
 
@@ -65,18 +73,47 @@ const PoliciesList = () => {
       options: { filter: true, sort: true },
     },
     {
-      name: 'description',
-      label: 'description',
+      name: 'cost',
+      label: 'Policy Cost',
       options: { filter: true, sort: true },
+    },
+    {
+      name: 'duration',
+      label: 'Duration',
+      options: { filter: true, sort: true,  display: false },
+    },
+    {
+      name: 'category',
+      label: 'category',
+      options: { filter: true, sort: true,  display: false },
+    },
+    {
+      name: 'description',
+      label: 'Description',
+      options: { filter: true, sort: true,  display: false },
+    },
+    {
+      name: 'createdAt',
+      label: 'Date',
+      options: { filter: true, sort: true },
+    },
+    {
+      name: 'updatedAt',
+      label: 'updatedAt',
+      options: { filter: true, sort: true, display: false },
     },
     {
       name: 'status',
       label: 'Status',
       options: {
         filter: true,
-        customBodyRender: (value) => (
-          <span className={`status ${value.toLowerCase()}`}>{value}</span>
-        ),
+        customBodyRender: (value) => {
+          // Check if value is boolean, and render the appropriate status text
+          const statusText = value === true ? "Active" : "Inactive";
+
+          // Return the status text with styling
+          return <span className={`status ${statusText.toLowerCase()}`}>{statusText}</span>;
+        },
       },
     },
     {
@@ -100,37 +137,6 @@ const PoliciesList = () => {
     },
   ];
 
-  const categories = [
-    {
-      id: 1,
-      dateCreated: "2022-02-03 08:53",
-      name: "2 Wheeler",
-      description: "Integer auctor at mauris a...",
-      status: "Active",
-    },
-    {
-      id: 2,
-      dateCreated: "2022-02-03 08:54",
-      name: "3 Wheeler",
-      description: "Sed at leo vel felis pellentesque...",
-      status: "Active",
-    },
-    {
-      id: 3,
-      dateCreated: "2022-02-03 08:56",
-      name: "4 Wheeler",
-      description: "Quisque at erat at ipsum mollis...",
-      status: "Active",
-    },
-    {
-      id: 4,
-      dateCreated: "2022-02-03 08:52",
-      name: "Commercial",
-      description: "Lorem ipsum dolor sit amet...",
-      status: "Active",
-    },
-  ];
-
   const options = {
     filterType: 'dropdown',
     responsive: 'standard',
@@ -141,9 +147,28 @@ const PoliciesList = () => {
     customToolbar: addButton,
   };
 
+
+  const getPolicies = async () => {
+    try {
+      setLoading(true); // Start loading
+      const result = await getAllPolicies();
+      setPolicies(result.data);
+      //toast(result.messagge)
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
+  }
+  useEffect(() => {
+    console.log('h')
+    getPolicies();
+  }, [])
+
   return (
-    <div className="clients-container">
-      <MUIDataTable title={"List of Insurance"} data={categories} columns={columns} options={options} />
+    <>
+      <MUIDataTable title={"List of Policies"} data={policies} columns={columns} options={options} />
       {isEdit && (
         <AddEditPolicies
           isEdit={isEdit}
@@ -152,7 +177,7 @@ const PoliciesList = () => {
           handleUpdate={handleUpdate}
         />
       )}
-    </div>
+    </>
   );
 };
 

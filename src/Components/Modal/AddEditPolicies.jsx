@@ -1,29 +1,70 @@
 import React, { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 import { Grid, TextField, Button, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
+import { getAllCetegory } from "../../Services/Api";
 
 const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
   const [name, setName] = useState("");
+  const [code, setCode] = useState();
+  const [cost, setCost] = useState();
+  const [duration, setDuration] = useState();
+  const [category, setCategory] = useState();
+  const [categoryList, setCategoryList] = useState();
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("Active");
+  const [status, setStatus] = useState(true);
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
   // Pre-fill form when editing
   useEffect(() => {
+    console.log(editData);
     if (editData) {
-      setName(editData[1]); // Assuming name is at index 1
-      setDescription(editData[2]); // Assuming description is at index 2
+      setName(editData[2]);
+      setCode(editData[1]);
+      setCost(editData[3]);
+      setDuration(editData[4]);
+      setCategory(editData[5]);
+      setDescription(editData[10]);
+      setStatus(editData[9]);
     }
   }, [editData]);
 
-  // Enable/Disable Save button based on input validity
-  useEffect(() => {
-    if (name.trim() && description.trim()) {
-      setIsSaveDisabled(false);
-    } else {
-      setIsSaveDisabled(true);
+    // Enable/Disable Save button based on input validity
+    useEffect(() => {
+      if (name.trim() && code.trim()) {
+        setIsSaveDisabled(false);
+      } else {
+        setIsSaveDisabled(true);
+      }
+    }, [name, description]);
+
+  const getCetegory = async () => {
+    try {
+      //setLoading(true); // Start loading
+      const result = await getAllCetegory();
+      setCategoryList(result.data);
+      //toast(result.messagge)
+
+
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      //setLoading(false); // End loading
     }
-  }, [name, description]);
+  }
+
+  useEffect(() => {
+    // Check if data already exists in local storage
+    const cachedData = localStorage.getItem("categories");
+    if (cachedData) {
+      // If data is available in local storage, use it
+      console.log("Using cached data from local storage");
+      setCategoryList(JSON.parse(cachedData)); // Parse the data and set it in state
+    } else {
+      getCetegory();
+      console.log(category);
+    }
+  }, [])
 
   const handleSave = () => {
     const updatedData = {
@@ -34,41 +75,109 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
     handleClose();
   };
 
+  const handleChange = (e) => {
+    console.log(e.target.value);
+    setCategory(e.target.value);
+  }
+
   return (
     <Modal open={isEdit} onClose={handleClose}>
-      <Grid container spacing={2} className="modal" style={{ padding: 20, backgroundColor: "white", borderRadius: 8 }}>
+      <Grid container spacing={2} className="modal policies" style={{ padding: 20, backgroundColor: "white", borderRadius: 8 }}>
         <Grid item xs={12}>
-          <h2>{editData ? "Edit Insurance Category" : "Add Insurance Category"}</h2>
+          <h2>{editData ? "Edit Insurance Policies" : "Add Insurance Policies"}</h2>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="Category Name"
-            variant="outlined"
-            fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              id="txtName"
+              label="Name"
+              variant="outlined"
+              fullWidth
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              id="txtCode"
+              label="Code"
+              variant="outlined"
+              fullWidth
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="Description"
-            variant="outlined"
-            multiline
-            rows={3}
-            fullWidth
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </Grid>
-          {/* <Grid item xs={12}>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              id="txtCost"
+              label="Cost"
+              variant="outlined"
+              fullWidth
+              type="number"
+              value={cost}
+              onChange={(e) => setCost(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={6}>
             <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
+              <InputLabel>Duration</InputLabel>
+              <Select value={duration} onChange={(e) => setDuration(e.target.value)} id="txtDuration">
+                <MenuItem value="1">1</MenuItem>
+                <MenuItem value="2">2</MenuItem>
+                <MenuItem value="3">3</MenuItem>
+                <MenuItem value="4">4</MenuItem>
+                <MenuItem value="5">5</MenuItem>
+                <MenuItem value="10">10</MenuItem>
+                <MenuItem value="15">15</MenuItem>
+                <MenuItem value="20">20</MenuItem>
+                <MenuItem value="30">30</MenuItem>
               </Select>
             </FormControl>
-          </Grid> */}
+          </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={6} container spacing={0}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select value={category} onChange={(e) => handleChange(e)}>
+                  {categoryList &&
+                    categoryList.map((item, index) => (
+                      <MenuItem key={index} value={item.name}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                  <MenuItem value="true">Active</MenuItem>
+                  <MenuItem value="false">Inactive</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={6}>
+            <TextField
+              id="txtDes"
+              label="Description"
+              variant="outlined"
+              multiline
+              fullWidth
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+
+          </Grid>
+        </Grid>
+
         <Grid item xs={12} container justifyContent="flex-end">
           <Button variant="contained" onClick={handleSave} disabled={isSaveDisabled}>
             Save

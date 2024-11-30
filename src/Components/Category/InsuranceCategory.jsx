@@ -8,8 +8,8 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
 import AddEditCategory from "../Modal/AddEditCategory.jsx";
 import { addCategory, getAllCetegory, updateCategory, deleteCategory } from "../../Services/Api.js";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+//import { ToastContainer, toast } from "react-toastify";
+//import 'react-toastify/dist/ReactToastify.css';
 import DeleteModal from "../Modal/DeleteModal.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -46,9 +46,10 @@ const InsuranceCategory = () => {
     try {
       setLoading(true); // Start loading
       const result = await deleteCategory(deleteData[0]);
-      toast.error("Item Deleted", {
-        position: "top-center",
-      });
+      console.log(result);
+      // toast.error("Item Deleted", {
+      //   position: "top-center",
+      // });
       setDelete(false);
       getCetegory();
     } catch (error) {
@@ -62,8 +63,14 @@ const InsuranceCategory = () => {
     try {
       setLoading(true); // Start loading
       const result = await getAllCetegory();
-      setCetegory(result.date);
-      toast(result.messagge)
+      setCetegory(result.data);
+      //toast(result.messagge)
+      
+      // Save API data to local storage
+      localStorage.setItem("categories", JSON.stringify(result.data));
+      console.log("API data saved to local storage");
+      
+      console.log(result);
     } catch (error) {
       console.log(error);
     } finally {
@@ -96,9 +103,9 @@ const InsuranceCategory = () => {
         setEdit(false);
         getCetegory();
       } else {
-        toast.error("Category not updated please connect with dev", {
-          position: "top-center",
-        });
+        // toast.error("Category not updated please connect with dev", {
+        //   position: "top-center",
+        // });
       }
     } catch (error) {
       console.log(error);
@@ -160,7 +167,7 @@ const InsuranceCategory = () => {
       options: { filter: true, sort: true },
     },
     {
-      name: 'desc',
+      name: 'description',
       label: 'Description',
       options: { filter: true, sort: true },
     },

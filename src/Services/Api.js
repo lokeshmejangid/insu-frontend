@@ -20,7 +20,7 @@ export const addCategory = async (payload) => {
     }
   };
 
-  //add category item
+  //category item
 export const getAllCetegory = async () => {
     try {
       const response = await instance.get("/api/category/all");
@@ -51,3 +51,13 @@ export const deleteCategory = async (id) => {
     throw error;
   }
 };
+
+  //add Policies item
+  export const getAllPolicies = async () => {
+    try {
+      const response = await instance.get("/api/policies/all");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };

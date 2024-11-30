@@ -1,3 +1,6 @@
+.modal.policies{
+  width: 50% !important;
+}
 .modal {
     width: 40% !important;
     position: absolute;
@@ -10,6 +13,7 @@
     box-shadow: 24;
     padding: 1em;
   }
+  
   .modal-xs {
     width: 90% !important;
     
