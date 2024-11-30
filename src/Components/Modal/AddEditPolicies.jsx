@@ -23,7 +23,7 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
       setCost(editData[3]);
       setDuration(editData[4]);
       setCategory(editData[5]);
-      setDescription(editData[10]);
+      setDescription(editData[6]);
       setStatus(editData[9]);
     }
   }, [editData]);

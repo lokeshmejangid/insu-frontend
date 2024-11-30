@@ -7,14 +7,16 @@ import IconButton from "@mui/material/IconButton";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
 import AddEditPolicies from "../Modal/AddEditPolicies.jsx";
-import { getAllPolicies } from "../../Services/Api.js";
+import { addPolicy, deletePolicy, getAllPolicies, updatePolicy } from "../../Services/Api.js";
 
 const PoliciesList = () => {
   const [isEdit, setEdit] = useState(false);
   const [editData, setEditData] = useState();
   const [loading, setLoading] = useState(false);
   const [policies, setPolicies] = useState();
-
+  const [deleteData, setDeleteData] = useState();
+  const [isDelete, setDelete] = useState(false);
+ 
   const handleAddBtn = () => {
     setEdit(true);
     setEditData();
@@ -32,19 +34,66 @@ const PoliciesList = () => {
   };
 
   const handleDelete = async () => {
-    // try {
-    //   const result = await deleteMenu(deleteData[0]);
-    //   toast.error("Item Deleted", {
-    //     position: "top-center",
-    //   });
-    //   setDelete(false);
-    //   getMenuData();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      setLoading(true); // Start loading
+      const result = await deletePolicy(deleteData[0]);
+      console.log(result);
+      // toast.error("Item Deleted", {
+      //   position: "top-center",
+      // });
+      setDelete(false);
+      getAllPolicies();
+    } catch (error) {
+      console.log(error);
+    }finally{
+      setLoading(false); // End loading
+    }
   };
 
-  const handleUpdate = () => { }
+  const updatePolicyItem = async (payload) => {
+    try {
+      setLoading(true); // Start loading
+      const result = await updatePolicy(payload, editData[0]);
+      if (result !== undefined) {
+        //toast.success("Category Updated", { position: "top-center" });
+        setEdit(false);
+        getAllPolicies();
+      } else {
+        // toast.error("Category not updated please connect with dev", {
+        //   position: "top-center",
+        // });
+      }
+    } catch (error) {
+      console.log(error);
+    }finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  const addPolicyItem = async (payload) => {
+    try {
+      setLoading(true); // Start loading
+      console.log(payload);
+      const result = await addPolicy(payload);
+      console.log(result)
+      //toast.success("jsfjk", { position: "top-center" });
+      setEdit(false);
+      getAllPolicies();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  const handleUpdate = (data) => { 
+    console.log(data);
+    if (editData !== undefined) {
+      updatePolicyItem(data);
+    } else {
+      addPolicyItem(data);
+    }
+  }
   const addButton = () => {
     return (
       <Tooltip disableFocusListener title="Add Client">
@@ -146,7 +195,7 @@ const PoliciesList = () => {
     searchPlaceholder: 'Search...',
     customToolbar: addButton,
   };
-
+  
 
   const getPolicies = async () => {
     try {

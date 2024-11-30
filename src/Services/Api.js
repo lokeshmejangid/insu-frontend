@@ -61,3 +61,35 @@ export const deleteCategory = async (id) => {
       throw error;
     }
   };
+
+  //add category item
+export const addPolicy = async (payload) => {
+  try {
+    console.log(payload);
+    const response = await instance.post("/api/policies/add", payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+ //update update
+export const updatePolicy = async (payload, id) => {
+  try {
+    console.log(payload, id)
+    const response = await instance.put(`/api/policies/update/${id}`, payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+  //delete category
+  export const deletePolicy = async (id) => {
+    try {
+      const response = await instance.delete(`/api/policies/delete/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
