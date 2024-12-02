@@ -16,6 +16,7 @@ const AddEditModal = (props) => {
   const user = JSON.parse(localStorage.getItem('user'));
   const [txtClientName, setClientName] = useState("");
   const [txtClientImg, setClientImg] = useState("");
+  const [status, setStatus] = useState();
   const [isBtnVisible, setBtnVisible] = useState(false);
   const [isImgValid, setImgValid] = useState(true);
   const [isImgBlur, setImgBlur] = useState(false);
@@ -28,6 +29,7 @@ const AddEditModal = (props) => {
     if (editData !== null && editData !== undefined) {
       setClientName(editData[3]);
       setClientImg(editData[1]);
+      setStatus(editData[4])
     }
   }, [editData]);
 
@@ -38,17 +40,16 @@ const AddEditModal = (props) => {
   const handleSave = () => {
     handleClose();
     const updatedData = {
-      clientName: txtClientName,
-      clientImg: txtClientImg,
-      userId: userId
+      name: txtClientName,
+      image: txtClientImg,
+      status: Boolean(status)
     };
     handleUpdate(updatedData);
   };
 
   const handleBtnVisibility = () => {
     if (
-      txtClientName.length > 0 &&
-      txtClientImg.length > 0
+      txtClientName.length > 0
     )
       setBtnVisible(true);
     else setBtnVisible(false);
@@ -60,8 +61,8 @@ const AddEditModal = (props) => {
     if (name === 'txtClientName') {
       setClientName(value);
     } else if(name === 'txtClientImg'){
-      const imageUrlRegex = /\.(jpeg|jpg|gif|png|bmp)$/.test(value);
-      setImgValid(imageUrlRegex);
+      // const imageUrlRegex = /\.(jpeg|jpg|gif|png|bmp)$/.test(value);
+      // setImgValid(imageUrlRegex);
       setClientImg(value)
     }else {
       // Handle other casesll
@@ -116,6 +117,13 @@ const AddEditModal = (props) => {
                 (txtClientImg.trim() == "" && "Image URL cannot be empty"))
             }
           />
+          <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <MenuItem value="true">Active</MenuItem>
+                <MenuItem value="false">Inactive</MenuItem>
+              </Select>
+            </FormControl>
         </Grid>
         <Grid
           item

@@ -8,76 +8,124 @@ import {
   MenuItem,
   FormControl,
   Select,
+  Typography,
 } from "@mui/material";
+import { getAllClient, getAllPolicies } from "../../Services/Api";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers";
+import { addYears } from "date-fns"; // Import for adding years to a date
+
+import { format } from "date-fns"; // Import for date formatting
 
 const AddEditInsu = (props) => {
   const { isEdit, handleClose, editData, handleUpdate } = props;
-  //const { userId } = useSelector((state) => state.saveUserId);
-  const user = JSON.parse(localStorage.getItem('user'));
-  const [txtClientName, setClientName] = useState("");
-  const [txtRefCode, setRefCode] = useState("");
-  const [txtRegDate, setRegDate] = useState("");
-  const [txtVehicleReg, setVehicleReg] = useState("");
 
-  const [isBtnVisible, setBtnVisible] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [polices, setPolicies] = useState();
+  const [client, setClient] = useState();
+  const [policyList, setPolicyList] = useState([]);
+  const [clientList, setClientList] = useState([]);
 
-  
-  let userId;
-  if(user !== undefined && user !== null) userId = user._id;
+  const [txtRegDate, setTxtRegDate] = useState(null); // Initialize state for the date
+  const [txtExpDate, setTxtExpDate] = useState("");
+  const [txtVehicleRegNo, setVehicleRegNo] = useState("");
+  const [txtVehicleChassisNo, setVehicleChassisNo] = useState("");
+  const [txtVehicleModel, setVehicleModel] = useState("");
+  const [status, setStatus] = useState();
+  const [uploadedDocument, setUploadedDocument] = useState(null); // State for uploaded document
+  const [cost, setCost] = useState("");
+  const [duration, setDuration] = useState("");
 
+  useEffect(() => {
+    // Fetch policy and client data
+    const getPolicies = async () => {
+      const result = await getAllPolicies();
+      setPolicyList(result.data);
+    };
+
+    const getClient = async () => {
+      const result = await getAllClient();
+      setClientList(result.data);
+    };
+
+    getPolicies();
+    getClient();
+  }, []);
 
   useEffect(() => {
     if (editData !== null && editData !== undefined) {
-      setRefCode(editData[2]);
-      setRegDate(editData[1]);
-      setVehicleReg(editData[3]);
-      setClientName(editData[4]);
+      // Format dates to strings in "YYYY-MM-DD" format
+      const formattedExpDate = format(new Date(editData[1]), "yyyy-MM-dd");
+      const formattedRegDate = format(new Date(editData[4]), "yyyy-MM-dd");
+
+      // Set the state with the formatted strings
+      setTxtExpDate(formattedExpDate);
+      setTxtRegDate(formattedRegDate);
+
+      setPolicies(editData[3]);
+
+      setClient(editData[5]);
+      setVehicleRegNo(editData[6]);
+      setVehicleChassisNo(editData[7]);
+      setVehicleModel(editData[8]);
+      setStatus(editData[9]);
     }
-  }, [editData]);
+
+  }, [editData])
 
   useEffect(() => {
-    handleBtnVisibility();
-  }, [txtClientName, txtRefCode, txtRegDate, setClientName]);
-
-  const handleSave = () => {
-    handleClose();
-    const updatedData = {
-      refCode: txtRefCode,
-      regDate: txtRegDate,
-      vehicleReg: txtVehicleReg,
-      clientName: txtClientName,
-      userId: userId
-    };
-    handleUpdate(updatedData);
-  };
-
-  const handleBtnVisibility = () => {
-    if (
-      txtClientName.length > 0 && 
-      txtRefCode.length > 0 && 
-      txtRegDate.length > 0 && 
-      txtVehicleReg.length > 0 
-    )
-      setBtnVisible(true);
-    else setBtnVisible(false);
-  };
+    // Calculate expiry date when txtRegDate or policy changes
+    if (txtRegDate && polices) {
+      const expiryDate = addYears(new Date(txtRegDate), polices.duration);
+      setTxtExpDate(expiryDate.toISOString().split("T")[0]); // Format as YYYY-MM-DD
+    }
+  }, [txtRegDate, polices]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === 'txtClientName') {
-      setClientName(value);
-    }else if (name === 'txtRefCode') {
-      setRefCode(value);
-    }else if (name === 'txtRegDate') {
-      setRegDate(value);
-    }else if (name === 'txtVehicleReg') {
-      setVehicleReg(value);
-    } else {
-      // Handle other casesll
+    if (name === "client") {
+      setClient(value);
+    } else if (name === "policies") {
+      setPolicies(value);
+      setCost(value.cost);
+      setDuration(value.duration);
+    } else if (name === "txtVehicleRegNo") {
+      setVehicleRegNo(value);
+    } else if (name === "txtVehicleChassisNo") {
+      setVehicleChassisNo(value);
+    } else if (name === "txtVehicleModel") {
+      setVehicleModel(value);
     }
+  };
 
-    handleBtnVisibility();
+  const handleDateChange = (newDate) => {
+    setTxtRegDate(newDate);
+  };
+
+  const handleSave = () => {
+    const formattedExpDate = format(new Date(txtExpDate), "yyyy-MM-dd");
+    const formattedRegDate = format(new Date(txtRegDate), "yyyy-MM-dd");
+
+    const updatedData = {
+      clientId: client._id,
+      insurancePolicyId: polices._id,
+      registrationDate: formattedRegDate,
+      expiryDate: formattedExpDate,
+      vehicleRegNo: txtVehicleRegNo,
+      vehicleChassisNo: txtVehicleChassisNo,
+      vehicleModal: txtVehicleModel,
+      status: Boolean(status),
+      //document: uploadedDocument,
+    };
+    console.log(updatedData);
+    handleUpdate(updatedData);
+    handleClose();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setUploadedDocument(file);
   };
 
   return (
@@ -90,61 +138,139 @@ const AddEditInsu = (props) => {
       <Grid container spacing={0} className="modal">
         <Grid item xs={12}>
           <div className="title">
-            {editData !== undefined ? "Edit Insurance Info" : "Add Insurance"}
+            {editData ? "Edit Insurance Info" : "Add Insurance"}
           </div>
         </Grid>
-        <Grid item xs={12} justifyContent={"center"}>
-          <TextField
-            id="txtRegDate"
-            name="txtRegDate"
-            label="Registered Date"
-            variant="outlined"
-            fullWidth
-            value={txtRegDate}
-            onChange={handleChange}
-          />
-          <TextField
-            id="txtRefCode"
-            name="txtRefCode"
-            label="Ref Code"
-            variant="outlined"
-            fullWidth
-            value={txtRefCode}
-            onChange={handleChange}
-          />
-          <TextField
-            id="txtClientName"
-            name="txtClientName"
-            label="Client Name"
-            variant="outlined"
-            fullWidth
-            value={txtClientName}
-            onChange={handleChange}
-          />
-          <TextField
-            id="txtVehicleReg"
-            name="txtVehicleReg"
-            label="Vehicle Registertion"
-            variant="outlined"
-            fullWidth
-            value={txtVehicleReg}
-            onChange={handleChange}
-          />
+        <Grid item xs={12} container spacing={2}>
+          <Grid item xs={6} container spacing={0}>
+            <FormControl fullWidth>
+              <InputLabel>Polices</InputLabel>
+              <Select
+                value={polices}
+                onChange={(e) => handleChange(e)}
+                name="policies"
+              >
+                {policyList &&
+                  policyList.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+            <Grid xs={6} item>
+              <Typography pt={1} pb={1}>{`Cost ${cost} rs`}</Typography>
+            </Grid>
+            <Grid xs={6} item>
+              <Typography pt={1} pb={1}>{`Duration ${duration} yr`}</Typography>
+            </Grid>
+          </Grid>
 
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel>Client</InputLabel>
+              <Select
+                value={client}
+                onChange={(e) => handleChange(e)}
+                name="client"
+              >
+                {clientList &&
+                  clientList.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
-        <Grid
-          item
-          xs={12}
-          container
-          spacing={0}
-          justifyContent={"center"}
-          mt={2}
-        >
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            disabled={isBtnVisible ? false : true}
-          >
+        <Grid item xs={12} container spacing={2}>
+          <Grid item xs={6}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Registration Date"
+                value={txtRegDate}
+                onChange={handleDateChange}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              id="txtExpDate"
+              name="txtExpDate"
+              label="Expiry Date"
+              variant="outlined"
+              fullWidth
+              value={txtExpDate}
+              InputProps={{
+                readOnly: true, // Make the expiry date read-only
+              }}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              id="txtVehicleRegNo"
+              name="txtVehicleRegNo"
+              label="Vehicle Registration No."
+              variant="outlined"
+              fullWidth
+              value={txtVehicleRegNo}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              id="txtVehicleChassisNo"
+              name="txtVehicleChassisNo"
+              label="Vehicle Chassis No"
+              variant="outlined"
+              fullWidth
+              value={txtVehicleChassisNo}
+              onChange={handleChange}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              id="txtVehicleModel"
+              name="txtVehicleModel"
+              label="Vehicle Model"
+              variant="outlined"
+              fullWidth
+              value={txtVehicleModel}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <MenuItem value="true">Active</MenuItem>
+                <MenuItem value="false">Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container spacing={2} mt={0}>
+          <Grid item xs={12}>
+            <Typography>Upload Document:</Typography>
+            <input type="file" onChange={handleFileChange} />
+            {uploadedDocument && (
+              <Typography variant="body2" mt={1}>
+                Selected File: {uploadedDocument.name}
+              </Typography>
+            )}
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container justifyContent="center" mt={2}>
+          <Button variant="contained" onClick={handleSave}>
             Save
           </Button>
         </Grid>

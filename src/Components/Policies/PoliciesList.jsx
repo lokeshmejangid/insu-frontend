@@ -8,6 +8,7 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
 import AddEditPolicies from "../Modal/AddEditPolicies.jsx";
 import { addPolicy, deletePolicy, getAllPolicies, updatePolicy } from "../../Services/Api.js";
+import DeleteModal from "../Modal/DeleteModal.jsx";
 
 const PoliciesList = () => {
   const [isEdit, setEdit] = useState(false);
@@ -42,7 +43,7 @@ const PoliciesList = () => {
       //   position: "top-center",
       // });
       setDelete(false);
-      getAllPolicies();
+      getPolicies();
     } catch (error) {
       console.log(error);
     }finally{
@@ -57,7 +58,7 @@ const PoliciesList = () => {
       if (result !== undefined) {
         //toast.success("Category Updated", { position: "top-center" });
         setEdit(false);
-        getAllPolicies();
+        getPolicies();
       } else {
         // toast.error("Category not updated please connect with dev", {
         //   position: "top-center",
@@ -78,7 +79,7 @@ const PoliciesList = () => {
       console.log(result)
       //toast.success("jsfjk", { position: "top-center" });
       setEdit(false);
-      getAllPolicies();
+      getPolicies();
     } catch (error) {
       console.log(error);
     } finally {
@@ -94,6 +95,10 @@ const PoliciesList = () => {
       addPolicyItem(data);
     }
   }
+  const deleteItem = (data) => {
+    setDelete(true);
+    setDeleteData(data);
+  };
   const addButton = () => {
     return (
       <Tooltip disableFocusListener title="Add Client">
@@ -152,6 +157,22 @@ const PoliciesList = () => {
       options: { filter: true, sort: true, display: false },
     },
     {
+      name: 'category',
+      label: 'category',
+      options: { 
+        filter: true, 
+        sort: true,
+        display: false,
+        customBodyRender: (value) => {
+          if (value && typeof value === 'object') {
+            return <span>{value.name}</span>; // Display the "name" field from the "client" object
+          }
+          return <span>Unknown</span>; // Fallback if "client" is undefined or not an object
+        },
+      },
+    },
+
+    {
       name: 'status',
       label: 'Status',
       options: {
@@ -178,7 +199,7 @@ const PoliciesList = () => {
             }} />
             <MdDelete size={20} color="red" className="pointer" onClick={(e) => {
               e.stopPropagation();
-              handleEdit(tableMeta.rowData);
+              deleteItem(tableMeta.rowData);
             }} />
           </div>
         ),
@@ -224,6 +245,13 @@ const PoliciesList = () => {
           handleClose={handleClose}
           editData={editData}
           handleUpdate={handleUpdate}
+        />
+      )}
+      {isDelete && (
+        <DeleteModal
+          isDelete={isDelete}
+          handleClose={handleClose}
+          handleDelete={handleDelete}
         />
       )}
     </>

@@ -7,14 +7,21 @@ import IconButton from "@mui/material/IconButton";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
 import AddEditModal from "../Modal/AddEditModal";
+import { addClient, deleteClient, getAllClient, updateClient } from "../../Services/Api";
+import CircularProgress from "@mui/material/CircularProgress";
+import DeleteModal from "../Modal/DeleteModal";
 
 const Clients = () => {
   const [isEdit, setEdit] = useState(false);
   const [editData, setEditData] = useState();
+  const [clients, setClients] = useState();
+  const [loading, setLoading] = useState(false);
+  const [deleteData, setDeleteData] = useState();
+  const [isDelete, setDelete] = useState(false);
 
   const handleAddBtn = () => {
     setEdit(true);
-    setEditData();  
+    setEditData();
   }
 
   const handleEdit = (data) => {
@@ -28,19 +35,90 @@ const Clients = () => {
   };
 
   const handleDelete = async () => {
-    // try {
-    //   const result = await deleteMenu(deleteData[0]);
-    //   toast.error("Item Deleted", {
-    //     position: "top-center",
-    //   });
-    //   setDelete(false);
-    //   getMenuData();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      setLoading(true); // Start loading
+      const result = await deleteClient(deleteData[0]);
+      console.log(result);
+      // toast.error("Item Deleted", {
+      //   position: "top-center",
+      // });
+      setDelete(false);
+      getClient();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
   };
 
-const handleUpdate = () => {}
+  const updateClientItem = async (payload) => {
+    try {
+      setLoading(true); // Start loading
+      const result = await updateClient(payload, editData[0]);
+      if (result !== undefined) {
+        //toast.success("Category Updated", { position: "top-center" });
+        setEdit(false);
+        getClient();
+      } else {
+        // toast.error("Category not updated please connect with dev", {
+        //   position: "top-center",
+        // });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  const addClientItem = async (payload) => {
+    try {
+      setLoading(true); // Start loading
+      console.log(payload);
+      const result = await addClient(payload);
+      console.log(result)
+      //toast.success("jsfjk", { position: "top-center" });
+      setEdit(false);
+      getClient();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  const getClient = async () => {
+    try {
+      setLoading(true); // Start loading
+      const result = await getAllClient();
+      setClients(result.data);
+      //toast(result.messagge)
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
+  }
+
+  const deleteItem = (data) => {
+    setDelete(true);
+    setDeleteData(data);
+  };
+  useEffect(() => {
+    console.log('h')
+    getClient();
+  }, [])
+
+  const handleUpdate = (data) => {
+    console.log(data);
+    if (editData !== undefined) {
+      updateClientItem(data);
+    } else {
+      addClientItem(data);
+    }
+  }
+
   const addButton = () => {
     return (
       <Tooltip disableFocusListener title="Add Client">
@@ -53,8 +131,8 @@ const handleUpdate = () => {}
 
   const columns = [
     {
-      name: 'dateCreated',
-      label: 'Date Created',
+      name: '_id',
+      label: 'Id',
       options: { filter: false, sort: true },
     },
     {
@@ -87,10 +165,14 @@ const handleUpdate = () => {}
       label: 'Status',
       options: {
         filter: true,
-        customBodyRender: (value) => (
-          <span className={`status ${value.toLowerCase()}`}>{value}</span>
-        ),
-      },
+        customBodyRender: (value) => {
+          // Check if value is boolean, and render the appropriate status text
+          const statusText = value === true ? "Active" : "Inactive";
+
+          // Return the status text with styling
+          return <span className={`status ${statusText.toLowerCase()}`}>{statusText}</span>;
+        },
+      }
     },
     {
       name: 'action',
@@ -100,36 +182,18 @@ const handleUpdate = () => {}
         customBodyRender: (value, tableMeta, updateValue) => (
           <div className="actionIcons">
             <MdOutlineEdit size={20} color="green" className="pointer" onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(tableMeta.rowData);
-                }} />
-            <MdDelete size={20} color="red" className="pointer"  onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(tableMeta.rowData);
-                }}/>
+              e.stopPropagation();
+              handleEdit(tableMeta.rowData);
+            }} />
+            <MdDelete size={20} color="red" className="pointer" onClick={(e) => {
+              e.stopPropagation();
+              deleteItem(tableMeta.rowData);
+            }} />
           </div>
         ),
       },
     },
   ];
-
-  const data = [
-    {
-      dateCreated: '2022-02-03 11:40',
-      image: 'https://via.placeholder.com/50',
-      code: '202202-00002',
-      name: 'Blake, Claire C',
-      status: 'Active',
-    },
-    {
-      dateCreated: '2022-02-03 10:45',
-      image: 'https://via.placeholder.com/50',
-      code: '202202-00001',
-      name: 'Cooper, Mark D',
-      status: 'Active',
-    },
-  ];
-
   const options = {
     filterType: 'dropdown',
     responsive: 'standard',
@@ -139,16 +203,27 @@ const handleUpdate = () => {}
     searchPlaceholder: 'Search...',
     customToolbar: addButton,
   };
-
   return (
     <div className="clients-container">
-      <MUIDataTable title={"List of Clients"} data={data} columns={columns} options={options} />
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
+      <MUIDataTable title={"List of Clients"} data={clients} columns={columns} options={options} />
       {isEdit && (
         <AddEditModal
           isEdit={isEdit}
           handleClose={handleClose}
           editData={editData}
           handleUpdate={handleUpdate}
+        />
+      )}
+      {isDelete && (
+        <DeleteModal
+          isDelete={isDelete}
+          handleClose={handleClose}
+          handleDelete={handleDelete}
         />
       )}
     </div>

@@ -3,6 +3,7 @@ import Modal from "@mui/material/Modal";
 import { Grid, TextField, Button, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
 import { getAllCetegory } from "../../Services/Api";
 
+let category_id;
 const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
   const [name, setName] = useState("");
   const [code, setCode] = useState();
@@ -28,14 +29,14 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
     }
   }, [editData]);
 
-    // Enable/Disable Save button based on input validity
-    useEffect(() => {
-      if (name.trim() && code.trim()) {
-        setIsSaveDisabled(false);
-      } else {
-        setIsSaveDisabled(true);
-      }
-    }, [name, description]);
+  // Enable/Disable Save button based on input validity
+  // useEffect(() => {
+  //   if (name.length > 0 && cost.length > 0 && duration.length > 0 && category.length > 0) {
+  //     setIsSaveDisabled(false);
+  //   } else {
+  //     setIsSaveDisabled(true);
+  //   }
+  // }, [name, cost, duration, category]);
 
   const getCetegory = async () => {
     try {
@@ -43,7 +44,6 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
       const result = await getAllCetegory();
       setCategoryList(result.data);
       //toast(result.messagge)
-
 
       console.log(result);
     } catch (error) {
@@ -69,14 +69,20 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
   const handleSave = () => {
     const updatedData = {
       name,
+      cost : Number(cost),
+      duration: Number(duration),
+      category_id,
       description,
+      status: Boolean(status)
     };
     handleUpdate(updatedData);
+    console.log(updatedData);
     handleClose();
   };
 
   const handleChange = (e) => {
-    console.log(e.target.value);
+    console.log(e);
+    category_id = e.target.value._id;
     setCategory(e.target.value);
   }
 
@@ -123,7 +129,7 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
           <Grid item xs={6}>
             <FormControl fullWidth>
               <InputLabel>Duration</InputLabel>
-              <Select value={duration} onChange={(e) => setDuration(e.target.value)} id="txtDuration">
+              <Select value={duration} type="number" onChange={(e) => setDuration(e.target.value)} id="txtDuration">
                 <MenuItem value="1">1</MenuItem>
                 <MenuItem value="2">2</MenuItem>
                 <MenuItem value="3">3</MenuItem>
@@ -145,7 +151,7 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
                 <Select value={category} onChange={(e) => handleChange(e)}>
                   {categoryList &&
                     categoryList.map((item, index) => (
-                      <MenuItem key={index} value={item.name}>
+                      <MenuItem key={index} value={item}>
                         {item.name}
                       </MenuItem>
                     ))}
@@ -179,7 +185,7 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
         </Grid>
 
         <Grid item xs={12} container justifyContent="flex-end">
-          <Button variant="contained" onClick={handleSave} disabled={isSaveDisabled}>
+          <Button variant="contained" onClick={handleSave}>
             Save
           </Button>
         </Grid>
