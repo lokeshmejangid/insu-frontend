@@ -37,6 +37,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full height */
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 10%;
   z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.7);
+  position: fixed;
+}
+table thead th .MuiButtonBase-root {
+  font-weight: bold;
+}
+table tbody td div{
+  text-align: center;
+}
+table thead th span {
+  display: flex;
+  justify-content: center;
+}
+.actionIcons svg{
+  margin-right: 1em;
 }

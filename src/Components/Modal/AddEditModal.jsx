@@ -15,14 +15,15 @@ const AddEditModal = (props) => {
   //const { userId } = useSelector((state) => state.saveUserId);
   const user = JSON.parse(localStorage.getItem('user'));
   const [txtClientName, setClientName] = useState("");
+  const [txtPhoneNo, setPhoneNo] = useState("");
   const [txtClientImg, setClientImg] = useState("");
   const [status, setStatus] = useState();
   const [isBtnVisible, setBtnVisible] = useState(false);
   const [isImgValid, setImgValid] = useState(true);
   const [isImgBlur, setImgBlur] = useState(false);
-  
+
   let userId;
-  if(user !== undefined && user !== null) userId = user._id;
+  if (user !== undefined && user !== null) userId = user._id;
 
 
   useEffect(() => {
@@ -60,11 +61,13 @@ const AddEditModal = (props) => {
 
     if (name === 'txtClientName') {
       setClientName(value);
-    } else if(name === 'txtClientImg'){
+    } else if (name === 'txtPhoneNo') {
+      setPhoneNo(value);
+    } else if (name === 'txtClientImg') {
       // const imageUrlRegex = /\.(jpeg|jpg|gif|png|bmp)$/.test(value);
       // setImgValid(imageUrlRegex);
       setClientImg(value)
-    }else {
+    } else {
       // Handle other casesll
     }
 
@@ -98,7 +101,16 @@ const AddEditModal = (props) => {
             value={txtClientName}
             onChange={handleChange}
           />
-
+          <TextField
+            id="txtPhoneNo"
+            name="txtPhoneNo"
+            label="Phone Number "
+            variant="outlined"
+            fullWidth
+            type="number"
+            value={txtPhoneNo}
+            onChange={handleChange}
+          />
           <TextField
             id="txtClientImg"
             name="txtClientImg"
@@ -118,12 +130,12 @@ const AddEditModal = (props) => {
             }
           />
           <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                <MenuItem value="true">Active</MenuItem>
-                <MenuItem value="false">Inactive</MenuItem>
-              </Select>
-            </FormControl>
+            <InputLabel>Status</InputLabel>
+            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <MenuItem value="true">Active</MenuItem>
+              <MenuItem value="false">Inactive</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
         <Grid
           item

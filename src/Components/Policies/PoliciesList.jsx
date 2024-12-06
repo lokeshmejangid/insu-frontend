@@ -9,6 +9,9 @@ import Tooltip from "@mui/material/Tooltip";
 import AddEditPolicies from "../Modal/AddEditPolicies.jsx";
 import { addPolicy, deletePolicy, getAllPolicies, updatePolicy } from "../../Services/Api.js";
 import DeleteModal from "../Modal/DeleteModal.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import CircularProgress from "@mui/material/CircularProgress";
 
 const PoliciesList = () => {
   const [isEdit, setEdit] = useState(false);
@@ -39,9 +42,10 @@ const PoliciesList = () => {
       setLoading(true); // Start loading
       const result = await deletePolicy(deleteData[0]);
       console.log(result);
-      // toast.error("Item Deleted", {
-      //   position: "top-center",
-      // });
+      toast.error("Item Deleted", {
+        position: "top-center",
+
+      });
       setDelete(false);
       getPolicies();
     } catch (error) {
@@ -56,13 +60,13 @@ const PoliciesList = () => {
       setLoading(true); // Start loading
       const result = await updatePolicy(payload, editData[0]);
       if (result !== undefined) {
-        //toast.success("Category Updated", { position: "top-center" });
+        toast.success("Category Updated", { position: "top-center" });
         setEdit(false);
         getPolicies();
       } else {
-        // toast.error("Category not updated please connect with dev", {
-        //   position: "top-center",
-        // });
+        toast.error("Category not updated please connect with dev", {
+          position: "top-center",
+        });
       }
     } catch (error) {
       console.log(error);
@@ -77,7 +81,7 @@ const PoliciesList = () => {
       console.log(payload);
       const result = await addPolicy(payload);
       console.log(result)
-      //toast.success("jsfjk", { position: "top-center" });
+      toast.success("jsfjk", { position: "top-center" });
       setEdit(false);
       getPolicies();
     } catch (error) {
@@ -223,7 +227,7 @@ const PoliciesList = () => {
       setLoading(true); // Start loading
       const result = await getAllPolicies();
       setPolicies(result.data);
-      //toast(result.messagge)
+      toast.success(result.mesage, { position: "top-center" });
       console.log(result);
     } catch (error) {
       console.log(error);
@@ -238,7 +242,13 @@ const PoliciesList = () => {
 
   return (
     <>
+    {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
       <MUIDataTable title={"List of Policies"} data={policies} columns={columns} options={options} />
+      <ToastContainer />
       {isEdit && (
         <AddEditPolicies
           isEdit={isEdit}

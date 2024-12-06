@@ -93,7 +93,7 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
           <h2>{editData ? "Edit Insurance Policies" : "Add Insurance Policies"}</h2>
         </Grid>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               id="txtName"
               label="Name"
@@ -101,16 +101,6 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
               fullWidth
               value={name}
               onChange={(e) => setName(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              id="txtCode"
-              label="Code"
-              variant="outlined"
-              fullWidth
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
             />
           </Grid>
         </Grid>
@@ -130,22 +120,22 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
             <FormControl fullWidth>
               <InputLabel>Duration</InputLabel>
               <Select value={duration} type="number" onChange={(e) => setDuration(e.target.value)} id="txtDuration">
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="3">3</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="15">15</MenuItem>
-                <MenuItem value="20">20</MenuItem>
-                <MenuItem value="30">30</MenuItem>
+                <MenuItem value="1">1 yr</MenuItem>
+                <MenuItem value="2">2 yr</MenuItem>
+                <MenuItem value="3">3 yr</MenuItem>
+                <MenuItem value="4">4 yr</MenuItem>
+                <MenuItem value="5">5 yr</MenuItem>
+                <MenuItem value="10">10 yr</MenuItem>
+                <MenuItem value="15">15 yr</MenuItem>
+                <MenuItem value="20">20 yr</MenuItem>
+                <MenuItem value="30">30 yr</MenuItem>
               </Select>
             </FormControl>
           </Grid>
         </Grid>
         <Grid container spacing={2}>
-          <Grid item xs={6} container spacing={0}>
-            <Grid item xs={12}>
+          
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select value={category} onChange={(e) => handleChange(e)}>
@@ -158,7 +148,7 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <InputLabel>Status</InputLabel>
                 <Select value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -167,9 +157,8 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
                 </Select>
               </FormControl>
             </Grid>
-          </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               id="txtDes"
               label="Description"

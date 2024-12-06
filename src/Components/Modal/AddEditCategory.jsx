@@ -5,16 +5,15 @@ import { Grid, TextField, Button, MenuItem, FormControl, Select, InputLabel } fr
 const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState(true);
+  const [status, setStatus] = useState(true); // Default status to true (active)
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
-  // Pre-fill form when editing\
+  // Pre-fill form when editing
   useEffect(() => {
     if (editData) {
-      setName(editData[2]); // Assuming name is at index 1
-      setDescription(editData[3]); // Assuming description is at index 2
-      setStatus(editData[4]);
-      console.log(editData);
+      setName(editData[3]); // Assuming name is at index 3
+      setDescription(editData[4]); // Assuming description is at index 4
+      setStatus(editData[5]); // Assuming status is at index 5
     }
   }, [editData]);
 
@@ -25,18 +24,21 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
     } else {
       setIsSaveDisabled(true);
     }
-  }, [name, description, status]);
+  }, [name, description]);
+
+  // Handle status change and ensure it is a boolean
+  const handleChange = (e) => {
+    setStatus(e.target.value === "true"); // Convert string to boolean
+  };
 
   const handleSave = () => {
-    
     const updatedData = {
       name,
-      status,
+      status, // status will now be a boolean value
       description,
     };
     handleUpdate(updatedData);
     handleClose();
-    console.log(updatedData);
   };
 
   return (
@@ -55,14 +57,14 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
           />
         </Grid>
         <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                <MenuItem value="true">Active</MenuItem>
-                <MenuItem value="false">Inactive</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
+          <FormControl fullWidth>
+            <InputLabel>Status</InputLabel>
+            <Select value={status.toString()} onChange={handleChange}> {/* Convert status to string for Select component */}
+              <MenuItem value="true">Active</MenuItem>
+              <MenuItem value="false">Inactive</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
         <Grid item xs={12}>
           <TextField
             label="Description"

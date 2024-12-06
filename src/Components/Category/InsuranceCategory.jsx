@@ -8,10 +8,12 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Tooltip from "@mui/material/Tooltip";
 import AddEditCategory from "../Modal/AddEditCategory.jsx";
 import { addCategory, getAllCetegory, updateCategory, deleteCategory } from "../../Services/Api.js";
-//import { ToastContainer, toast } from "react-toastify";
-//import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import DeleteModal from "../Modal/DeleteModal.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
+import { faIR } from "date-fns/locale";
+import { format } from 'date-fns';
 
 const InsuranceCategory = () => {
   const [isEdit, setEdit] = useState(false);
@@ -45,11 +47,11 @@ const InsuranceCategory = () => {
   const handleDelete = async () => {
     try {
       setLoading(true); // Start loading
-      const result = await deleteCategory(deleteData[0]);
+      const result = await deleteCategory(deleteData[1]);
       console.log(result);
-      // toast.error("Item Deleted", {
-      //   position: "top-center",
-      // });
+      toast.error("Item Deleted", {
+        position: "top-center",
+      });
       setDelete(false);
       getCetegory();
     } catch (error) {
@@ -64,8 +66,7 @@ const InsuranceCategory = () => {
       setLoading(true); // Start loading
       const result = await getAllCetegory();
       setCetegory(result.data);
-      //toast(result.messagge)
-      
+      toast.success(result.mesage, { position: "top-center" });
       // Save API data to local storage
       localStorage.setItem("categories", JSON.stringify(result.data));
       console.log("API data saved to local storage");
@@ -84,7 +85,7 @@ const InsuranceCategory = () => {
       console.log(payload);
       const result = await addCategory(payload);
       console.log(result)
-      //toast.success("jsfjk", { position: "top-center" });
+      toast.success(result.messagge, { position: "top-center" });
       setEdit(false);
       getCetegory();
     } catch (error) {
@@ -97,15 +98,15 @@ const InsuranceCategory = () => {
   const updateCategoryItem = async (payload) => {
     try {
       setLoading(true); // Start loading
-      const result = await updateCategory(payload, editData[0]);
+      const result = await updateCategory(payload, editData[1]);
       if (result !== undefined) {
-        //toast.success("Category Updated", { position: "top-center" });
+        toast.success(result.messagge, { position: "top-center" });
         setEdit(false);
         getCetegory();
       } else {
-        // toast.error("Category not updated please connect with dev", {
-        //   position: "top-center",
-        // });
+        toast.error("Category not updated please connect with dev", {
+          position: "top-center",
+        });
       }
     } catch (error) {
       console.log(error);
@@ -148,17 +149,31 @@ const InsuranceCategory = () => {
 
   const columns = [
     {
+      name: 'serialNo', // S. No. Column
+      label: 'S. No.',
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1; // Display row index + 1 for serial numbers
+        },
+      },
+    },
+    {
       name: '_id',
       label: 'Id',
-      options: { filter: true, sort: true },
+      options: { filter: true, sort: true, display: false },
     },
     {
       name: 'createdAt',
       label: 'Date',
-      options: { filter: false, sort: true },
-      customBodyRender: (value, tableMeta, updateValue) => {
-        return <span className="itemName">{tableMeta.rowData[1]}</span>;
-      },
+      options: { 
+        filter: false, 
+        sort: true,
+        customBodyRender: (value) => {
+          return value ? format(new Date(value), 'dd-MM-yy') : "";  
+        }
+      }
     },
 
     {
@@ -211,8 +226,9 @@ const InsuranceCategory = () => {
     filterType: 'dropdown',
     responsive: 'standard',
     selectableRows: 'none',
-    download: false,
-    print: false,
+    download: true,
+    print: true,
+    columns:false,
     searchPlaceholder: 'Search...',
     customToolbar: addButton,
   };
@@ -225,7 +241,7 @@ const InsuranceCategory = () => {
         </div>
       )}
       <MUIDataTable title={"Insurance Category"} data={category} columns={columns} options={options} />
-      {/* <ToastContainer /> */}
+      <ToastContainer />
       {isEdit && (
         <AddEditCategory
           isEdit={isEdit}

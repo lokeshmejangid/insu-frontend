@@ -61,11 +61,13 @@ const Sidebar = ({ open }) => {
         >
           {[
             { text: 'Dashboard', icon: <MdDashboard color='#fff' fontSize='25px' />, path: '/' },
-            { text: 'Clients', icon: <FaUsers color='#fff' fontSize='25px' />, path: '/clients' },
-            { text: 'Insurance', icon: <AiFillInsurance color='#fff' fontSize='25px' />, path: '/insurance' },
-            { text: 'Transarion', icon: <GrTransaction color='#fff' fontSize='25px' />, path: '/transation' },
-            { text: 'Insurance Category', icon: <MdCategory color='#fff' fontSize='25px' />, path: '/insuranceCategory' },
+            { text: 'Category', icon: <MdCategory color='#fff' fontSize='25px' />, path: '/insuranceCategory' },
             { text: 'Policies List', icon: <MdPolicy color='#fff' fontSize='25px' />, path: '/policiesList' },
+            { text: 'Insurance', icon: <AiFillInsurance color='#fff' fontSize='25px' />, path: '/insurance' },
+            { text: 'Clients', icon: <FaUsers color='#fff' fontSize='25px' />, path: '/clients' },
+            
+            { text: 'Transarion', icon: <GrTransaction color='#fff' fontSize='25px' />, path: '/transation' },
+            
           ].map((item, index) => (
             <ListItem button key={index} onClick={() => handleNavigation(item.path)} style={{display: 'flex', gap: '10px', cursor:'pointer'}}>
               <ListItemIcon style={{minWidth: '0'}}>{item.icon}</ListItemIcon>
