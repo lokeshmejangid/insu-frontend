@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Paper,
@@ -20,41 +20,65 @@ import {
 import { FaUsers } from 'react-icons/fa';
 import { MdCategory, MdLocalPolice, MdOutlineLocalPolice } from "react-icons/md";
 import { FaAddressCard } from "react-icons/fa";
+import { getAllDashboard } from '../../Services/Api';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(false);
+  const [dashboard, setDashboard] = useState({
+    activePoliciesCount: 0,
+    inactivePoliciesCount: 0,
+    clientsCount: 0,
+    insuredVehicleCount: 0,
+    barChartData: [],
+    lineChartData: [],
+  });
+
+  const getDashboard = async () => {
+    try {
+      setLoading(true); // Start loading
+      const result = await getAllDashboard();
+      setDashboard(result.data);
+      toast.success(result.message, { position: "top-center" });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
+  }
+
+  useEffect(() => {
+    getDashboard();
+  }, [])
+
+
   const stats = [
-    { title: 'Active Policies', value: 3, icon: <MdLocalPolice size={24} />, color: '#4caf50' },
-    { title: 'Inactive Policies', value: 3, icon: <MdOutlineLocalPolice size={24} />, color: '#f44336' },
-    { title: 'Clients', value: 3, icon: <FaUsers size={24} />, color: '#ff9800' },
-    { title: 'Insured Vehicle', value: 1, icon: <FaAddressCard size={24} />, color: '#00bcd4' },
-  ];
-
-  const barChartData = [
-    { name: 'Jan', Active: 20, Inactive: 5 },
-    { name: 'Feb', Active: 30, Inactive: 10 },
-    { name: 'Mar', Active: 40, Inactive: 8 },
-    { name: 'Apr', Active: 35, Inactive: 12 },
-  ];
-
-  const lineChartData = [
-    { month: 'Jan', Clients: 15, Policies: 10 },
-    { month: 'Feb', Clients: 25, Policies: 15 },
-    { month: 'Mar', Clients: 35, Policies: 20 },
-    { month: 'Apr', Clients: 45, Policies: 30 },
+    { title: 'Active Policies', value: dashboard.activePoliciesCount, icon: <MdLocalPolice size={24} />, color: '#4caf50' },
+    { title: 'Inactive Policies', value: dashboard.inactivePoliciesCount, icon: <MdOutlineLocalPolice size={24} />, color: '#f44336' },
+    { title: 'Clients', value: dashboard.clientsCount, icon: <FaUsers size={24} />, color: '#ff9800' },
+    { title: 'Insured Vehicle', value: dashboard.insuredVehicleCount, icon: <FaAddressCard size={24} />, color: '#00bcd4' },
   ];
 
   return (
     <div className="dashboard">
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
+        </div>
+      )}
       <Grid container className="main-container">
         {/* Stats Cards */}
         <Grid item xs={12} className="content">
           <Typography variant="h4" className="welcome-title">
             Welcome to Vehicle Insurance Management System
           </Typography>
-          <Grid container spacing={2} mt={2}>
+          <ToastContainer />
+          <Grid container spacing={2} mt={0}>
             {stats.map((stat, index) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                <Paper className="stat-card" style={{ borderLeft: `5px solid ${stat.color}` }}>
+                <Paper className="stat-card" style={{ borderLeft: `5px solid ${stat.color}`, padding: '1em'}}>
                   <Grid container alignItems="center" spacing={2}>
                     <Grid item className="stat-icon-container">
                       <Typography className="stat-icon">{stat.icon}</Typography>
@@ -71,15 +95,15 @@ const Dashboard = () => {
         </Grid>
 
         {/* Charts */}
-        <Grid container spacing={3} mt={4}>
+        <Grid container spacing={3} mt={0}>
           {/* Bar Chart */}
           <Grid item xs={12} md={6}>
             <Paper>
               <Typography variant="h6" gutterBottom style={{ padding: '16px' }}>
                 Policy Status Overview
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={barChartData}>
+              <ResponsiveContainer width="100%" height={300} className="pad-5-2">
+                <BarChart data={dashboard.barChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
@@ -98,8 +122,8 @@ const Dashboard = () => {
               <Typography variant="h6" gutterBottom style={{ padding: '16px' }}>
                 Client & Policy Growth
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={lineChartData}>
+              <ResponsiveContainer width="100%" height={300} className="pad-5-2">
+                <LineChart data={dashboard.lineChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />

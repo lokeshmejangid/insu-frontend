@@ -175,8 +175,8 @@ export const getAllInsurance = async () => {
 //update update
 export const updateInsurance = async (payload, id) => {
   try {
-    console.log(payload, id)
-    const response = await instance.put(`/api/client/insurance/${id}`, payload);
+    console.log(payload)
+    const response = await instance.put(`/api/insurance/update/${id}`, payload);
     return response.data;
   } catch (error) {
     throw error;
@@ -187,6 +187,16 @@ export const updateInsurance = async (payload, id) => {
 export const deleteInsurance = async (id) => {
   try {
     const response = await instance.delete(`/api/insurance/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+//update update
+export const getAllDashboard = async () => {
+  try {
+    const response = await instance.get(`/api/dashboard/all`);
     return response.data;
   } catch (error) {
     throw error;

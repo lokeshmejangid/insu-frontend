@@ -10,6 +10,7 @@ import Transition from './Components/Transations/Transations.jsx';
 import InsuranceCategory from './Components/Category/InsuranceCategory.jsx';
 import PoliciesList from './Components/Policies/PoliciesList.jsx';
 import Clients from './Components/Client/Clients.jsx';
+import Notification from './Components/Notification/Notification.jsx';
 
 const AppContent = () => {
   const location = useLocation();
@@ -65,6 +66,7 @@ const AppContent = () => {
           <Route path="/transation" element={<Transition />} />
           <Route path="/insuranceCategory" element={<InsuranceCategory />} />
           <Route path="/policiesList" element={<PoliciesList />} />
+          <Route path="/notification" element={<Notification />} />
         </Routes>
       </Box>
     </Box>

@@ -49,9 +49,7 @@ const InsuranceCategory = () => {
       setLoading(true); // Start loading
       const result = await deleteCategory(deleteData[1]);
       console.log(result);
-      toast.error("Item Deleted", {
-        position: "top-center",
-      });
+      toast.error(result.message, {position: "top-center"});
       setDelete(false);
       getCetegory();
     } catch (error) {
@@ -66,7 +64,7 @@ const InsuranceCategory = () => {
       setLoading(true); // Start loading
       const result = await getAllCetegory();
       setCetegory(result.data);
-      toast.success(result.mesage, { position: "top-center" });
+      toast.success(result.message, { position: "top-center" });
       // Save API data to local storage
       localStorage.setItem("categories", JSON.stringify(result.data));
       console.log("API data saved to local storage");

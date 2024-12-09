@@ -12,20 +12,20 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
   const [category, setCategory] = useState();
   const [categoryList, setCategoryList] = useState();
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState(true);
+  const [status, setStatus] = useState("");
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
   // Pre-fill form when editing
   useEffect(() => {
-    console.log(editData);
     if (editData) {
-      setName(editData[2]);
-      setCode(editData[1]);
-      setCost(editData[3]);
-      setDuration(editData[4]);
-      setCategory(editData[5]);
-      setDescription(editData[6]);
-      setStatus(editData[9]);
+      console.log(editData[9]?.name);
+      setCode(editData[2] || "");
+      setName(editData[3] || "");
+      setCost(editData[4] || 0);
+      setDuration(Number(editData[5] || 0));
+      setCategory(editData[9]?.name || ""); // Handle undefined category
+      setDescription(editData[6] || "");
+      setStatus(editData[10] || false);
     }
   }, [editData]);
 
@@ -69,14 +69,15 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
   const handleSave = () => {
     const updatedData = {
       name,
-      cost : Number(cost),
+      cost: Number(cost),
       duration: Number(duration),
       category_id,
       description,
       status: Boolean(status)
     };
+    console.log("updatedData" + updatedData);
     handleUpdate(updatedData);
-    console.log(updatedData);
+    
     handleClose();
   };
 
@@ -119,7 +120,11 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
           <Grid item xs={6}>
             <FormControl fullWidth>
               <InputLabel>Duration</InputLabel>
-              <Select value={duration} type="number" onChange={(e) => setDuration(e.target.value)} id="txtDuration">
+              <Select
+                value={String(duration) || ""} // Convert to string to match MenuItem values
+                onChange={(e) => setDuration(Number(e.target.value))} // Convert back to number on change
+                id="txtDuration"
+              >
                 <MenuItem value="1">1 yr</MenuItem>
                 <MenuItem value="2">2 yr</MenuItem>
                 <MenuItem value="3">3 yr</MenuItem>
@@ -134,29 +139,29 @@ const AddEditCategory = ({ isEdit, handleClose, editData, handleUpdate }) => {
           </Grid>
         </Grid>
         <Grid container spacing={2}>
-          
-            <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel>Category</InputLabel>
-                <Select value={category} onChange={(e) => handleChange(e)}>
-                  {categoryList &&
-                    categoryList.map((item, index) => (
-                      <MenuItem key={index} value={item}>
-                        {item.name}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel>Status</InputLabel>
-                <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <MenuItem value="true">Active</MenuItem>
-                  <MenuItem value="false">Inactive</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel>Category</InputLabel>
+              <Select value={category} onChange={(e) => handleChange(e)}>
+                {categoryList &&
+                  categoryList.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <MenuItem value={true}>Active</MenuItem>
+                <MenuItem value={false}>Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
           <Grid item xs={12}>
             <TextField

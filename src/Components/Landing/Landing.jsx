@@ -83,7 +83,8 @@ const Landing = () => {
         password
       };
 
-      loginUser(payload);
+      //loginUser(payload);
+      navigate("/");
     //}
   }
   return (

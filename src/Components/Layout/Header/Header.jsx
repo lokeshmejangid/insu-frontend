@@ -2,7 +2,7 @@ import React from 'react';
 import { AppBar, Toolbar, IconButton, Typography, Button } from '@mui/material';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdLogout } from 'react-icons/md';
-
+import { IoIosNotifications } from "react-icons/io";
 const Header = ({ onToggleSidebar, onLogout, sidebarOpen }) => {
 
   return (
@@ -20,6 +20,7 @@ const Header = ({ onToggleSidebar, onLogout, sidebarOpen }) => {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Dashboard
         </Typography>
+        <Button color="inherit" startIcon={<IoIosNotifications />} />
         <Button color="inherit" startIcon={<MdLogout />} onClick={onLogout}>
           Logout
         </Button>

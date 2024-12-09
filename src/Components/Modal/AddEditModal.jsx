@@ -9,74 +9,75 @@ import {
   FormControl,
   Select,
 } from "@mui/material";
+import { getAllPolicies } from "../../Services/Api";
 
 const AddEditModal = (props) => {
   const { isEdit, handleClose, editData, handleUpdate } = props;
-  //const { userId } = useSelector((state) => state.saveUserId);
   const user = JSON.parse(localStorage.getItem('user'));
   const [txtClientName, setClientName] = useState("");
   const [txtPhoneNo, setPhoneNo] = useState("");
-  const [txtClientImg, setClientImg] = useState("");
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState(""); // Initializing as empty string
   const [isBtnVisible, setBtnVisible] = useState(false);
-  const [isImgValid, setImgValid] = useState(true);
-  const [isImgBlur, setImgBlur] = useState(false);
+  const [policyList, setPolicyList] = useState([]);
+  const [polices, setPolicies] = useState(""); // Initialize with empty string
 
   let userId;
   if (user !== undefined && user !== null) userId = user._id;
 
+  useEffect(() => {
+    // Fetch policy and client data
+    const getPolicies = async () => {
+      const result = await getAllPolicies();
+      setPolicyList(result.data);
+    };
+    getPolicies();
+  }, []);
 
   useEffect(() => {
     if (editData !== null && editData !== undefined) {
-      setClientName(editData[3]);
-      setClientImg(editData[1]);
-      setStatus(editData[4])
+      console.log(editData);
+      setClientName(editData[2]); // Assuming editData[2] contains the name
+      setPhoneNo(editData[3]); // Assuming editData[3] contains the phone number
+      setStatus(editData[4]); // Assuming editData[4] contains the status, make sure it's boolean
+      setPolicies(editData[5]._id); // Assuming editData[5] is the policy object and contains _id
     }
   }, [editData]);
 
   useEffect(() => {
     handleBtnVisibility();
-  }, [txtClientName, txtClientImg]);
+  }, [txtClientName, txtPhoneNo, status, polices]);
 
   const handleSave = () => {
     handleClose();
     const updatedData = {
       name: txtClientName,
-      image: txtClientImg,
-      status: Boolean(status)
+      phoneNumber: txtPhoneNo,
+      policy_id: polices,
+      status: Boolean(status), // Ensure status is boolean
     };
+    console.log(updatedData);
     handleUpdate(updatedData);
   };
 
   const handleBtnVisibility = () => {
-    if (
-      txtClientName.length > 0
-    )
-      setBtnVisible(true);
+    if (txtClientName.length > 0) setBtnVisible(true);
     else setBtnVisible(false);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === 'txtClientName') {
       setClientName(value);
     } else if (name === 'txtPhoneNo') {
       setPhoneNo(value);
-    } else if (name === 'txtClientImg') {
-      // const imageUrlRegex = /\.(jpeg|jpg|gif|png|bmp)$/.test(value);
-      // setImgValid(imageUrlRegex);
-      setClientImg(value)
-    } else {
-      // Handle other casesll
+    } else if (name === 'policies') {
+      setPolicies(value); // Store the _id of the selected policy
+    } else if (name === 'status') {
+      setStatus(value); // Update status based on selection
     }
 
     handleBtnVisibility();
   };
-
-  const handleBlur = () => {
-    setImgBlur(true);
-  }
 
   return (
     <Modal
@@ -104,36 +105,37 @@ const AddEditModal = (props) => {
           <TextField
             id="txtPhoneNo"
             name="txtPhoneNo"
-            label="Phone Number "
+            label="Phone Number"
             variant="outlined"
             fullWidth
             type="number"
             value={txtPhoneNo}
             onChange={handleChange}
           />
-          <TextField
-            id="txtClientImg"
-            name="txtClientImg"
-            label="Please Add Image"
-            variant="outlined"
-            sx={{ mt: 1 }}
-            fullWidth
-            value={txtClientImg}
-            autoFocus={false}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={isImgBlur && (!isImgValid || txtClientImg.trim() == "")}
-            helperText={
-              isImgBlur &&
-              ((!isImgValid && "Invalid Image URL") ||
-                (txtClientImg.trim() == "" && "Image URL cannot be empty"))
-            }
-          />
           <FormControl fullWidth>
+            <InputLabel>Policies</InputLabel>
+            <Select
+              value={polices}
+              onChange={handleChange}
+              name="policies"
+            >
+              {policyList &&
+                policyList.map((item, index) => (
+                  <MenuItem key={index} value={item._id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel>Status</InputLabel>
-            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <MenuItem value="true">Active</MenuItem>
-              <MenuItem value="false">Inactive</MenuItem>
+            <Select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              name="status"
+            >
+              <MenuItem value={true}>Active</MenuItem>
+              <MenuItem value={false}>Inactive</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -148,7 +150,7 @@ const AddEditModal = (props) => {
           <Button
             variant="contained"
             onClick={handleSave}
-            disabled={isBtnVisible ? false : true}
+            disabled={!isBtnVisible}
           >
             Save
           </Button>

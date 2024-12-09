@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import MUIDataTable from 'mui-datatables';
-import './insurance.css';
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { FiPlus } from "react-icons/fi"; // Import the plus icon
 import IconButton from "@mui/material/IconButton";
@@ -14,7 +13,7 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CircularProgress from "@mui/material/CircularProgress";
 
-const Insurance = () => {
+const Notification = () => {
   const [isEdit, setEdit] = useState(false);
   const [editData, setEditData] = useState();
 
@@ -180,52 +179,7 @@ const Insurance = () => {
         },
       },
     },
-    
-    {
-      name: 'vehicleRegNo',
-      label: 'Vehicle Reg No',
-      options: { filter: true, sort: true },
-    },
-    {
-      name: 'vehicleChassisNo',
-      label: 'Vehicle Chassis No',
-      options: { filter: true, sort: true, display: true },
-    },
-    {
-      name: 'vehicleModal',
-      label: 'Vehicle Model No',
-      options: { filter: true, sort: true, display: false },
-    }, 
-    {
-      name: 'status',
-      label: 'Status',
-      options: {
-        filter: true,
-        customBodyRender: (value) => {
-          const statusText = value === true ? "Active" : "Inactive";
-          return <span className={`status ${statusText.toLowerCase()}`}>{statusText}</span>;
-        },
-      },
-    },
-    {
-      name: 'action',
-      label: 'Action',
-      options: {
-        filter: false,
-        customBodyRender: (value, tableMeta, updateValue) => (
-          <div className="actionIcons">
-            <MdOutlineEdit size={20} color="green" className="pointer" onClick={(e) => {
-              e.stopPropagation();
-              handleEdit(tableMeta.rowData);
-            }} />
-            <MdDelete size={20} color="red" className="pointer" onClick={(e) => {
-              e.stopPropagation();
-              deleteItem(tableMeta.rowData);
-            }} />
-          </div>
-        ),
-      },
-    },
+  
   ];
 
   const options = {
@@ -235,7 +189,6 @@ const Insurance = () => {
     download: true,
     print: true,
     searchPlaceholder: 'Search...',
-    customToolbar: addButton,
   };
 
   const getInsurance = async () => {
@@ -263,25 +216,10 @@ const Insurance = () => {
           <CircularProgress />
         </div>
       )}
-      <MUIDataTable title={"List of Insurance"} data={insurance} columns={columns} options={options} />
+      <MUIDataTable title={"List of Notifications"} data={insurance} columns={columns} options={options} />
       <ToastContainer />
-      {isEdit && (
-        <AddEditInsu
-          isEdit={isEdit}
-          handleClose={handleClose}
-          editData={editData}
-          handleUpdate={handleUpdate}
-        />
-      )}
-      {isDelete && (
-        <DeleteModal
-          isDelete={isDelete}
-          handleClose={handleClose}
-          handleDelete={handleDelete}
-        />
-      )}
     </div>
   );
 };
 
-export default Insurance;
+export default Notification;

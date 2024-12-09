@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MUIDataTable from "mui-datatables";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -10,139 +10,91 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import Button from "@mui/material/Button";
 import AddEditInsu from "../Modal/AddEditInsu.jsx";
 import "./transations.css";
+import { getAllInsurance, getAllTransation } from "../../Services/Api.js";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import CircularProgress from "@mui/material/CircularProgress";
+import { format } from 'date-fns';
 
 const Transations = () => {
-  const [isEdit, setEdit] = useState(false);
-  const [editData, setEditData] = useState(null);
-
-  const [filterFromDate, setFilterFromDate] = useState(null);
-  const [filterToDate, setFilterToDate] = useState(null);
-  const [filteredData, setFilteredData] = useState([]);
-
-  const [data] = useState([
-    {
-      dateRegistered: "2022-02-03 11:40",
-      refCode: "202202-00002",
-      clientName: "Blake, Claire C",
-      vehicleReg: "12345678",
-      status: "Active",
-    },
-    {
-      dateRegistered: "2022-02-03 10:45",
-      refCode: "202202-00001",
-      clientName: "Cooper, Mark D",
-      vehicleReg: "12345678",
-      status: "Active",
-    },
-    {
-      dateRegistered: "2023-03-15 14:00",
-      refCode: "202303-00003",
-      clientName: "Taylor, Sarah L",
-      vehicleReg: "87654321",
-      status: "Inactive",
-    },
-  ]);
-
-  const handleAddBtn = () => {
-    setEdit(true);
-    setEditData(null);
-  };
-
-  const handleEdit = (rowData) => {
-    setEdit(true);
-    setEditData(rowData);
-  };
-
-  const handleClose = () => {
-    setEdit(false);
-  };
-
-  // Apply filters
-  const applyFilters = () => {
-    const filtered = data.filter((item) => {
-      const itemDate = dayjs(item.dateRegistered);
-      const fromDate = filterFromDate ? dayjs(filterFromDate) : null;
-      const toDate = filterToDate ? dayjs(filterToDate) : null;
-
-      if (fromDate && toDate) {
-        return itemDate.isAfter(fromDate.startOf("day")) && itemDate.isBefore(toDate.endOf("day"));
-      }
-      if (fromDate) {
-        return itemDate.isAfter(fromDate.startOf("day"));
-      }
-      if (toDate) {
-        return itemDate.isBefore(toDate.endOf("day"));
-      }
-      return true; // No filters applied
-    });
-
-    setFilteredData(filtered);
-  };
-
-  // Clear filters
-  const clearFilters = () => {
-    setFilterFromDate(null);
-    setFilterToDate(null);
-    setFilteredData(data);
-  };
-
-  const addButton = () => {
-    return (
-      <Tooltip disableFocusListener title="Add Client">
-        <IconButton onClick={handleAddBtn}>
-          <ControlPointIcon />
-        </IconButton>
-      </Tooltip>
-    );
-  };
+  const [transations, setTransations] = useState();
+  const [loading, setLoading] = useState(false);
 
   const columns = [
     {
-      name: "dateRegistered",
-      label: "Date Registered",
-      options: { filter: false, sort: true },
-    },
-    {
-      name: "refCode",
-      label: "Ref Code",
-      options: { filter: true, sort: true },
-    },
-    {
-      name: "clientName",
-      label: "Client Name",
-      options: { filter: true, sort: true },
-    },
-    {
-      name: "vehicleReg",
-      label: "Vehicle Reg",
-      options: { filter: true, sort: true },
-    },
-    {
-      name: "status",
-      label: "Status",
+      name: 'serialNo', // S. No. Column
+      label: 'S. No.',
       options: {
-        filter: true,
-        customBodyRender: (value) => (
-          <span className={`status ${value.toLowerCase()}`}>{value}</span>
-        ),
+        filter: false,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1; // Display row index + 1 for serial numbers
+        },
       },
     },
     {
-      name: "action",
-      label: "Action",
+      name: '_id',
+      label: 'Id',
+      options: { filter: false, sort: true, display: false },
+
+    },
+    {
+      name: 'client',
+      label: 'Client Name',
       options: {
-        filter: false,
-        customBodyRender: (value, tableMeta) => (
-          <div className="actionIcons">
-            <MdOutlineEdit
-              size={20}
-              color="green"
-              className="pointer"
-              onClick={() => handleEdit(tableMeta.rowData)}
-            />
-            <MdDelete size={20} color="red" className="pointer" />
-          </div>
-        ),
+        filter: true,
+        sort: true,
+        customBodyRender: (value) => {
+          if (value && typeof value === 'object') {
+            return <span>{value.name}</span>; // Display the "name" field from the "client" object
+          }
+          return <span>Unknown</span>; // Fallback if "client" is undefined or not an object
+        },
+      },
+    },
+    {
+      name: 'policy',
+      label: 'Policy',
+      options: {
+        filter: true,
+        sort: true,
+        display: true,
+        customBodyRender: (value) => {
+          if (value && typeof value === 'object') {
+            return <span>{value.name}</span>; // Display the "name" field from the "client" object
+          }
+          return <span>Unknown</span>; // Fallback if "client" is undefined or not an object
+        },
+      },
+    },
+    {
+      name: 'vehicleRegNo',
+      label: 'Vehicle Reg No',
+      options: { filter: true, sort: true },
+    },
+    {
+      name: 'registrationDate',
+      label: 'Registration Date',
+      options: { filter: true, sort: true, display: true },
+    },
+    {
+      name: 'expiryDate',
+      label: 'Expiry Date',
+      options: { filter: false, sort: true, display: true },
+    },
+    {
+      name: 'client',
+      label: 'Phone Number',
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+        customBodyRender: (value) => {
+          if (value && typeof value === 'object') {
+            return <span>{value.phoneNumber}</span>; // Display the "name" field from the "client" object
+          }
+          return <span>Unknown</span>; // Fallback if "client" is undefined or not an object
+        },
       },
     },
   ];
@@ -151,72 +103,42 @@ const Transations = () => {
     filterType: "dropdown",
     responsive: "standard",
     selectableRows: "none",
-    download: false,
-    print: false,
+    download: true,
+    print: true,
     searchPlaceholder: "Search...",
-    customToolbar: addButton,
   };
+  const getInsurance = async () => {
+    try {
+      setLoading(true); // Start loading
+      const result = await getAllInsurance();
+      setTransations(result.data);
+      toast.success(result.message, { position: "top-center" });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false); // End loading
+    }
+  }
 
-  React.useEffect(() => {
-    setFilteredData(data); // Initially set all data as filtered data
-  }, [data]);
+  useEffect(() => {
+    getInsurance();
+  }, [])
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div className="clients-container">
-        {/* Filters Section */}
-        <div
-          className="filters-container"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          {/* Filters Row */}
-          <div style={{ display: "flex", gap: "16px", marginBottom: "10px" }}>
-            {/* Date From Filter */}
-            <DatePicker
-              label="Date From"
-              value={filterFromDate}
-              onChange={(newValue) => setFilterFromDate(newValue)}
-              renderInput={(params) => <input {...params} />}
-            />
-            {/* Date To Filter */}
-            <DatePicker
-              label="Date To"
-              value={filterToDate}
-              onChange={(newValue) => setFilterToDate(newValue)}
-              renderInput={(params) => <input {...params} />}
-            />
-
-            <Button variant="contained" className="btnFilter" onClick={applyFilters}>
-              Filter
-            </Button>
-            <Button variant="outlined" className="btnClrFilter"  onClick={clearFilters}>
-              Clear
-            </Button>
-          </div>
-
+    <>
+      {loading && (
+        <div className="loading-overlay">
+          <CircularProgress />
         </div>
-
-        {/* Data Table */}
-        <MUIDataTable
-          title={"All Transactions"}
-          data={filteredData}
-          columns={columns}
-          options={options}
-        />
-        {isEdit && (
-          <AddEditInsu
-            isEdit={isEdit}
-            handleClose={handleClose}
-            editData={editData}
-          />
-        )}
-      </div>
-    </LocalizationProvider>
+      )}
+      <MUIDataTable
+        title={"All Transactions"}
+        data={transations}
+        columns={columns}
+        options={options}
+      />
+      <ToastContainer />
+    </>
   );
 };
 

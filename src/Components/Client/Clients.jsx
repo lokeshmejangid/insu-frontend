@@ -10,6 +10,8 @@ import AddEditModal from "../Modal/AddEditModal";
 import { addClient, deleteClient, getAllClient, updateClient } from "../../Services/Api";
 import CircularProgress from "@mui/material/CircularProgress";
 import DeleteModal from "../Modal/DeleteModal";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Clients = () => {
   const [isEdit, setEdit] = useState(false);
@@ -31,17 +33,15 @@ const Clients = () => {
 
   const handleClose = () => {
     setEdit(false);
-    //setDelete(false);
+    setDelete(false);
   };
 
   const handleDelete = async () => {
     try {
       setLoading(true); // Start loading
-      const result = await deleteClient(deleteData[0]);
+      const result = await deleteClient(deleteData[1]);
       console.log(result);
-      // toast.error("Item Deleted", {
-      //   position: "top-center",
-      // });
+      toast.error(result.message, { position: "top-center" });
       setDelete(false);
       getClient();
     } catch (error) {
@@ -54,15 +54,13 @@ const Clients = () => {
   const updateClientItem = async (payload) => {
     try {
       setLoading(true); // Start loading
-      const result = await updateClient(payload, editData[0]);
+      const result = await updateClient(payload, editData[1]);
       if (result !== undefined) {
-        //toast.success("Category Updated", { position: "top-center" });
+        toast.success(result.message, { position: "top-center" });
         setEdit(false);
         getClient();
       } else {
-        // toast.error("Category not updated please connect with dev", {
-        //   position: "top-center",
-        // });
+        toast.error(result.message, { position: "top-center" });
       }
     } catch (error) {
       console.log(error);
@@ -77,7 +75,7 @@ const Clients = () => {
       console.log(payload);
       const result = await addClient(payload);
       console.log(result)
-      //toast.success("jsfjk", { position: "top-center" });
+      toast.success(result.message, { position: "top-center" });
       setEdit(false);
       getClient();
     } catch (error) {
@@ -92,7 +90,7 @@ const Clients = () => {
       setLoading(true); // Start loading
       const result = await getAllClient();
       setClients(result.data);
-      //toast(result.messagge)
+      toast.success(result.message, { position: "top-center" });
       console.log(result);
     } catch (error) {
       console.log(error);
@@ -131,33 +129,29 @@ const Clients = () => {
 
   const columns = [
     {
-      name: '_id',
-      label: 'Id',
-      options: { filter: false, sort: true },
-    },
-    {
-      name: 'image',
-      label: 'Image',
+      name: 'serialNo', // S. No. Column
+      label: 'S. No.',
       options: {
         filter: false,
-        sort: false,
-        customBodyRender: (value) => (
-          <img
-            src={value}
-            alt="Client"
-            style={{ width: 50, height: 50, borderRadius: '50%' }}
-          />
-        ),
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1; // Display row index + 1 for serial numbers
+        },
       },
     },
     {
-      name: 'code',
-      label: 'Code',
-      options: { filter: true, sort: true },
-    },
+      name: '_id',
+      label: 'Id',
+      options: { filter: false, sort: true, display: false },
+    },    
     {
       name: 'name',
       label: 'Name',
+      options: { filter: true, sort: true },
+    },
+    {
+      name: 'phoneNumber',
+      label: 'Phone Number',
       options: { filter: true, sort: true },
     },
     {
@@ -174,6 +168,21 @@ const Clients = () => {
         },
       }
     },
+    {
+      name: 'policy',
+      label: 'Policy Code',
+      options: { 
+        filter: true, 
+        sort: true,
+        display: true,
+        customBodyRender: (value) => {
+          if (value && typeof value === 'object') {
+            return <span>{value.code}</span>; // Display the "name" field from the "client" object
+          }
+          return <span>Unknown</span>; // Fallback if "client" is undefined or not an object
+        },
+      },
+    },    
     {
       name: 'action',
       label: 'Action',
@@ -198,8 +207,8 @@ const Clients = () => {
     filterType: 'dropdown',
     responsive: 'standard',
     selectableRows: 'none',
-    download: false,
-    print: false,
+    download: true,
+    print: true,
     searchPlaceholder: 'Search...',
     customToolbar: addButton,
   };
@@ -211,6 +220,7 @@ const Clients = () => {
         </div>
       )}
       <MUIDataTable title={"List of Clients"} data={clients} columns={columns} options={options} />
+      <ToastContainer />
       {isEdit && (
         <AddEditModal
           isEdit={isEdit}

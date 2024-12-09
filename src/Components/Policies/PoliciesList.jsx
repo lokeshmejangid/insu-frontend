@@ -12,6 +12,7 @@ import DeleteModal from "../Modal/DeleteModal.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CircularProgress from "@mui/material/CircularProgress";
+import { format } from 'date-fns';
 
 const PoliciesList = () => {
   const [isEdit, setEdit] = useState(false);
@@ -40,12 +41,9 @@ const PoliciesList = () => {
   const handleDelete = async () => {
     try {
       setLoading(true); // Start loading
-      const result = await deletePolicy(deleteData[0]);
+      const result = await deletePolicy(deleteData[1]);
       console.log(result);
-      toast.error("Item Deleted", {
-        position: "top-center",
-
-      });
+      toast.error(result.message, { position: "top-center"});
       setDelete(false);
       getPolicies();
     } catch (error) {
@@ -58,15 +56,13 @@ const PoliciesList = () => {
   const updatePolicyItem = async (payload) => {
     try {
       setLoading(true); // Start loading
-      const result = await updatePolicy(payload, editData[0]);
+      const result = await updatePolicy(payload, editData[1]);
       if (result !== undefined) {
-        toast.success("Category Updated", { position: "top-center" });
+        toast.success(result.message, { position: "top-center" });
         setEdit(false);
         getPolicies();
       } else {
-        toast.error("Category not updated please connect with dev", {
-          position: "top-center",
-        });
+        toast.error(result.message, {position: "top-center"});
       }
     } catch (error) {
       console.log(error);
@@ -81,7 +77,7 @@ const PoliciesList = () => {
       console.log(payload);
       const result = await addPolicy(payload);
       console.log(result)
-      toast.success("jsfjk", { position: "top-center" });
+      toast.success(result.message, { position: "top-center" });
       setEdit(false);
       getPolicies();
     } catch (error) {
@@ -115,6 +111,17 @@ const PoliciesList = () => {
 
   const columns = [
     {
+      name: 'serialNo', // S. No. Column
+      label: 'S. No.',
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1; // Display row index + 1 for serial numbers
+        },
+      },
+    },
+    {
       name: '_id',
       label: 'Id',
       options: { filter: false, sort: true, display: false },
@@ -141,11 +148,6 @@ const PoliciesList = () => {
       options: { filter: true, sort: true,  display: false },
     },
     {
-      name: 'category',
-      label: 'category',
-      options: { filter: true, sort: true,  display: false },
-    },
-    {
       name: 'description',
       label: 'Description',
       options: { filter: true, sort: true,  display: false },
@@ -154,6 +156,9 @@ const PoliciesList = () => {
       name: 'createdAt',
       label: 'Date',
       options: { filter: true, sort: true },
+      customBodyRender: (value) => {
+        return value ? format(new Date(value), 'dd-MM-yy') : "";  
+      }
     },
     {
       name: 'updatedAt',
@@ -162,11 +167,11 @@ const PoliciesList = () => {
     },
     {
       name: 'category',
-      label: 'category',
+      label: 'Category',
       options: { 
         filter: true, 
         sort: true,
-        display: false,
+        display: true,
         customBodyRender: (value) => {
           if (value && typeof value === 'object') {
             return <span>{value.name}</span>; // Display the "name" field from the "client" object
@@ -215,8 +220,8 @@ const PoliciesList = () => {
     filterType: 'dropdown',
     responsive: 'standard',
     selectableRows: 'none',
-    download: false,
-    print: false,
+    download: true,
+    print: true,
     searchPlaceholder: 'Search...',
     customToolbar: addButton,
   };
@@ -227,7 +232,7 @@ const PoliciesList = () => {
       setLoading(true); // Start loading
       const result = await getAllPolicies();
       setPolicies(result.data);
-      toast.success(result.mesage, { position: "top-center" });
+      toast.success(result.message, { position: "top-center" });
       console.log(result);
     } catch (error) {
       console.log(error);

@@ -13,6 +13,14 @@
     box-shadow: 24;
     padding: 1em;
   }
+  .modal .MuiButtonBase-root.MuiButton-contained {
+    background-color: purple !important;
+    color: white !important;
+  }
+  .modal .MuiButtonBase-root.MuiButton-contained:hover{
+    background-color: rgb(98, 1, 98) !important;
+    color: white !important;
+  }
   
   .modal-xs {
     width: 90% !important;
@@ -57,4 +65,10 @@ table thead th span {
 }
 .actionIcons svg{
   margin-right: 1em;
+}
+.pad-5-2{
+  padding: 0.2em;
+}
+.w-100{
+  width: 100% !important;
 }
